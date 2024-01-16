@@ -88,8 +88,8 @@ The following things play role for passing to the interview stage:
 1. Message format
 
 Header:
-- type of a message 2 bytes (after I changed how numbers are, this can be changed back to 1 byte)
-- data length 2 bytes - integer 0-65536 - 2n16
-- auth token 4 bytes
+- type of a message 2 bytes (after I have changed how small numbers are, this can be changed back to 1 byte)
+- data length 2 bytes - integer 0-65536 
+- auth token 4 bytes - picked large number to avoid duplicates or manully create one by "attacker"
 Data:
 - payload: custom X bytes 
