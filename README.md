@@ -63,10 +63,13 @@ The following things play role for passing to the interview stage:
 1. Message format
 
 Header:
--type of a message (heartbeat or ping) 1 bytes - integer 0-255
--data length 2 bytes - integer
+-type of a message (heartbeat or ping) 1 bytes - integer 0-255 - 2n8
+-data length 2 bytes - integer 0-65536 - 2n16
 
 - payload: custom X bytes 
+
+Unsigned 4-byte Integer: Ranges from 0 to 4,294,967,295.
+Signed 4-byte Integer: Typically ranges from -2,147,483,648 to 2,147,483,647. In this case, one bit is used to represent the sign (positive or negative), reducing the range for the value itself.
 
 
 def encode_ping():
