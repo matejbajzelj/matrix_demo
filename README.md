@@ -32,11 +32,12 @@ The main function of the server at this moment - is to facilitate game of "Guess
 The game flow is as follows:
 
 1. Client A requests a list of possible opponents (IDs) - command "get users"
-   <img width="688" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/cc36e480-addf-4c04-9027-d752faa2cb1f">
-
+<img width="372" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/5ae01bcb-e74a-4000-ad1c-abeeb2c0f373">
 
 3. Server responds with a list of possible opponents (IDs)
-4. Client A requests a match with opponent (ID), specifying a word to guess - command "starting match with {id} {word}"
+<img width="372" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/abe80236-a09a-44cb-af9e-327fd80e833c">
+
+5. Client A requests a match with opponent (ID), specifying a word to guess - command "starting match with {id} {word}"
    <img width="700" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/595eb46e-822e-4e61-9ebd-1ed9a8caa3d5">
    
 6. Server either confirms this or rejects with an error code
@@ -47,9 +48,11 @@ The game flow is as follows:
 <img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/51128088-0328-4b62-a1bb-f29344c698d7">
 
 6. Client A is informed of the progress of Client B (attempts)
-7. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
-8. Match ends when Client B guesses the word, or gives up
-9. Command "get matches"
+<img width="1589" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/67409361-74db-48eb-98ed-eb091ea489e2">
+
+8. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
+9. Match ends when Client B guesses the word, or gives up
+10. Command "get matches"
 
 
 
