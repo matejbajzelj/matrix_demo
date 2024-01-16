@@ -107,13 +107,14 @@ def listen_clients(conn, addr, client_id):
                 disconnect_client(conn)
                 print("50")
 
-            else:
-                
+            else:                
                 print("41")
 
                 if message_type == E_MESSAGE_TYPE.GET_USERS:
+                    print("51")
                     message_to_sent = get_users()
 
+                print(f"message before sending: {message_to_sent}")
                 success_message_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, message_to_sent)
                 conn.sendall(success_message_data)
 
@@ -156,13 +157,13 @@ def start_server(host='127.0.0.1', port=65432):
                     success_message = "Password accepted. Connection established. ID sent"                
                     success_message_data = encode_message(E_MESSAGE_TYPE.ASSIGNED_ID, client_id, success_message)
                     conn.sendall(success_message_data)
+                
+                else:
+                    success_message = f"Message received from client: {payload}"
+                    print(success_message)
 
-
-                success_message = f"Message received from client: {payload}"
-                print(success_message)
-
-                success_message_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, success_message)
-                conn.sendall(success_message_data)
+                    success_message_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, success_message)
+                    conn.sendall(success_message_data)
 
                 client_thread = threading.Thread(target=listen_clients, args=(conn, addr, client_id))
                 client_thread.start()
