@@ -31,11 +31,17 @@ At this moment, the server answers to any requests the client sends to the serve
 The main function of the server at this moment - is to facilitate game of "Guess a word" between two clients.
 The game flow is as follows:
 
-1. Client A requests a list of possible opponents (IDs)
-2. Server responds with a list of possible opponents (IDs)
-3. Client A requests a match with opponent (ID), specifying a word to guess
-4. Server either confirms this or rejects with an error code
-5. The target client - client B - is informed of the match, and can begin guesses
+1. Client A requests a list of possible opponents (IDs) - command "get users"
+   <img width="688" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/cc36e480-addf-4c04-9027-d752faa2cb1f">
+
+
+3. Server responds with a list of possible opponents (IDs)
+4. Client A requests a match with opponent (ID), specifying a word to guess - command "starting match with {id} {word}"
+   <img width="700" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/595eb46e-822e-4e61-9ebd-1ed9a8caa3d5">
+   
+6. Server either confirms this or rejects with an error code
+  
+8. The target client - client B - is informed of the match, and can begin guesses
   <img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/df35d6c2-fe23-46a8-bf82-fead35794a98">
 
 <img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/51128088-0328-4b62-a1bb-f29344c698d7">
@@ -43,19 +49,15 @@ The game flow is as follows:
 6. Client A is informed of the progress of Client B (attempts)
 7. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
 8. Match ends when Client B guesses the word, or gives up
+9. Command "get matches"
 
-- GET USERS
-<img width="688" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/cc36e480-addf-4c04-9027-d752faa2cb1f">
 
-- Starting match with {id} {word}
-<img width="700" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/595eb46e-822e-4e61-9ebd-1ed9a8caa3d5">
 
 - Client B receiving invitation
  <img width="563" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/bf97a531-73fe-4be4-9108-83622cacaced">
 
 - GET MATCHES:
-<img width="547" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ff7541ed-a88f-4fa0-a427-48f92e5e6dd9">
-
+   <img width="547" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ff7541ed-a88f-4fa0-a427-48f92e5e6dd9">
 
 | Server specifics:
 Must offer both Unix socket and a TCP port for client connection.
