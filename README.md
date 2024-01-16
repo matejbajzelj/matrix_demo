@@ -38,12 +38,12 @@ The game flow is as follows:
 <img width="372" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/abe80236-a09a-44cb-af9e-327fd80e833c">
 
 5. Client A requests a match with opponent (ID), specifying a word to guess - command "starting match with {id} {word}"
-   <img width="700" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/595eb46e-822e-4e61-9ebd-1ed9a8caa3d5">
+<img width="700" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/595eb46e-822e-4e61-9ebd-1ed9a8caa3d5">
    
 6. Server either confirms this or rejects with an error code
   
 8. The target client - client B - is informed of the match, and can begin guesses
-  <img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/df35d6c2-fe23-46a8-bf82-fead35794a98">
+<img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/df35d6c2-fe23-46a8-bf82-fead35794a98">
 
 <img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/51128088-0328-4b62-a1bb-f29344c698d7">
 
