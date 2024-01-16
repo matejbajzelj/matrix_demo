@@ -48,16 +48,17 @@ The game flow is as follows:
 <img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/51128088-0328-4b62-a1bb-f29344c698d7">
 
 6. Client A is informed of the progress of Client B (attempts)
-<img width="1589" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/67409361-74db-48eb-98ed-eb091ea489e2">
+<img width="1016" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/e9a9a1de-6526-42e5-bfc3-69753c434b43">
+
 
 8. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
 9. Match ends when Client B guesses the word, or gives up
 10. Command "get matches"
 
 
-
 - Client B receiving invitation
- <img width="563" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/bf97a531-73fe-4be4-9108-83622cacaced">
+<img width="592" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/382bfc62-5677-4cfb-8739-fc7fa2b9c411">
+
 
 - GET MATCHES:
    <img width="547" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ff7541ed-a88f-4fa0-a427-48f92e5e6dd9">
