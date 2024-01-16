@@ -88,26 +88,8 @@ The following things play role for passing to the interview stage:
 1. Message format
 
 Header:
--type of a message (heartbeat or ping) 1 bytes - integer 0-255 - 2n8
--data length 2 bytes - integer 0-65536 - 2n16
-
+- type of a message 2 bytes (after I changed how numbers are, this can be changed back to 1 byte)
+- data length 2 bytes - integer 0-65536 - 2n16
+- auth token 4 bytes
+Data:
 - payload: custom X bytes 
-
-Unsigned 4-byte Integer: Ranges from 0 to 4,294,967,295.
-Signed 4-byte Integer: Typically ranges from -2,147,483,648 to 2,147,483,647. In this case, one bit is used to represent the sign (positive or negative), reducing the range for the value itself.
-
-
-def encode_ping():
-    return struct.pack('>BI', 0x01, 0)
-
-def encode_data(data1, data2):
-    payload = struct.pack('>II', data1, data2)
-    return struct.pack('>BI', 0x02, len(payload)) + payload
-
-if message_type == 0x01:
-    return "Ping"
-elif message_type == 0x02 and payload_length == 8:
-    data1, data2 = struct.unpack('>II', payload)
-    return f"Data: {data1}, {data2}"
-else:
-    return "Unknown message format"
