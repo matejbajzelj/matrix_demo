@@ -48,11 +48,13 @@ def start_server(host='127.0.0.1', port=65432):
 
              # Receive the password from the client
             data = conn.recv(1024)
-            message_type, message_length, received_password = decode_message(data)
+            message_type, message_length, received_password = decode_message(data)            
+            print("**** password: ****")
+            print(received_password)
             if received_password == correct_password:
                  # Password is correct, send a success message and keep the connection alive
                 success_message = "Password accepted. Connection established."
-                success_message_data = encode_message(2, success_message)
+                success_message_data = encode_message(200, success_message)
                 conn.sendall(success_message_data)
 
                 client_thread = threading.Thread(target=listen_clients, args=(conn, addr))

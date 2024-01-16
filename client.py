@@ -9,10 +9,7 @@ def start_client(host='127.0.0.1', port=65432):
         # Receive the welcome message from the server
         data = s.recv(1024)
         message_type, message_length, message = decode_message(data)
-        print(f"Received message from server: {message}")
-        print(f"Received message_type: {message_type}")
-        print(f"Received message_length: {message_length}")
-
+      
         # Prompt for the password
         password = input("Enter your password: ")
 
@@ -39,9 +36,7 @@ def start_client(host='127.0.0.1', port=65432):
                 # Receive a response
                 data = s.recv(1024)
                 message_type, message_length, response = decode_message(data)
-                print(f"Received message from server: {response}")
-                print(f"Received message_type: {message_type}")
-                print(f"Received message_length: {message_length}")
+                
         else:
               # It's an error message (incorrect password)
             print(f"response from server: {response}")
