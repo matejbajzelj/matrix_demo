@@ -2,13 +2,14 @@ import socket
 import threading
 from tools.tools import decode_message, encode_message, E_MESSAGE_TYPE
 from tools.client_lib import find_client, generate_unique_id, add_client, remove_client
-from tools.commands import get_users
-from tools.match import is_client_in_match, start_match, generate_unique_match_id
+from tools.commands import get_users, get_matches
+from tools.match import is_client_in_match, start_match, generate_unique_match_id, find_match, remove_match
 
 # Constants
 correct_password = "pass123"
 min_auth_token_value = 1000000000
 max_auth_token_value = 4294967295 # 4 bytes 32 bits
+LISTEN_PORT = 65432
 
 # Create a list to store verified client IDs
 connected_clients = []
@@ -66,8 +67,13 @@ def listen_clients(conn, addr, client_id):
                 print("41")
 
                 if message_type == E_MESSAGE_TYPE.GET_USERS:
-                    print("51")
+                    print(f"51 user count: {len(connected_clients)}")
                     message_to_sent = get_users(connected_clients)
+
+                elif message_type == E_MESSAGE_TYPE.GET_MATCHES:
+                    print(f"52 matches count: {len(active_matches)}")
+                    message_to_sent = get_matches(active_matches)
+
                 elif message_type == E_MESSAGE_TYPE.START_MATCH:
                     if is_client_in_match(client_id, active_matches):
                        # Client is already in a match, send an error response
@@ -92,7 +98,7 @@ def listen_clients(conn, addr, client_id):
 
                             # sent invite to an opponent
                             opponent_conn = opponentExist[1]
-                            invitation_message = f"Invitation to match {match['match_id']} with guess a word. Accept or Decline?"
+                            invitation_message = f"Invitation to match #{match['match_id']}# with guess a word. Accept or Decline?"
                             invitation_data = encode_message(E_MESSAGE_TYPE.MATCH_INVITATION, opponent_id, invitation_message)
                             opponent_conn.sendall(invitation_data)
                             print("64")
@@ -101,6 +107,24 @@ def listen_clients(conn, addr, client_id):
                             # Opponent not found, send an error response
                             print("65")
                             message_to_sent = "Opponent not found."
+
+                elif message_type == E_MESSAGE_TYPE.ACCEPT_MATCH:
+                    
+                    accepted_match_id = payload
+                    print(f"Opponent accepted the match with ID {accepted_match_id}")
+                    
+                    print(f"771 matches count: {len(active_matches)}")
+                    isMatchFound, matchFound = find_match(accepted_match_id, active_matches)
+                    print(f"772")
+                    matchFound[4] = "active" # set status
+                    
+
+                elif message_type == E_MESSAGE_TYPE.DECLINE_MATCH:
+                    
+                    accepted_match_id = payload
+                    print(f"771 matches count: {len(active_matches)}")
+                    print(f"Opponent declined the match with ID {accepted_match_id}")
+                    remove_match(accepted_match_id, active_matches)
 
 
                 print(f"message before sending: {message_to_sent}")
@@ -114,7 +138,7 @@ def listen_clients(conn, addr, client_id):
         print(f"Connection with {addr} closed")
 
 
-def start_server(host='127.0.0.1', port=65433):
+def start_server(host='127.0.0.1', port=LISTEN_PORT):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((host, port))
         s.listen()
