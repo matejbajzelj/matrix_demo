@@ -1,3 +1,14 @@
+- Getting users
+<img width="688" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/cc36e480-addf-4c04-9027-d752faa2cb1f">
+
+- Starting match Client A
+<img width="700" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/595eb46e-822e-4e61-9ebd-1ed9a8caa3d5">
+
+- Client B receiving invitation
+ <img width="563" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/bf97a531-73fe-4be4-9108-83622cacaced">
+
+
+
 Well it's that easy!
 ---
 
