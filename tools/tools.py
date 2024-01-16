@@ -29,7 +29,7 @@ def encode_message(message_type:E_MESSAGE_TYPE, auth_token:int, payload:str):
     # Big-endian: 2 byte for type, 2 bytes for length, 4 byte for auth_token. 
     # H 16bit int - Assume for demo 0-65535 is enough big int.
     # I 32bit - 4 bytes 4,294,967,295
-    header = struct.pack('>HHI', i_message_type, message_length, auth_token) 
+    header = struct.pack(my_binary_encode_format, i_message_type, message_length, auth_token) 
     # print(f"Send data: {header + binary_payload}")
     return header + binary_payload
 
@@ -46,7 +46,7 @@ def decode_message(binary_data):
     # just to have printout in 1 place.
     # print(f"Received b_message: {b_message}")
     print(f"{s_message}")
-    #print(f"{message_type}")
+    # print(f"Received message_type: {message_type}")
     # print(f"Received message_length: {message_length}")
     # print(f"Received auth_token: {auth_token}")
     

@@ -6,7 +6,7 @@ from tools.commands import get_users
 from tools.match import is_client_in_match, start_match, generate_unique_match_id
 
 # Constants
-correct_password = "mypass123"
+correct_password = "pass123"
 min_auth_token_value = 1000000000
 max_auth_token_value = 4294967295 # 4 bytes 32 bits
 
@@ -16,19 +16,16 @@ active_matches = []
 
 def allow_client_futher(conn, addr, message_type, auth_token, payload = ""):
 
-    print("allow_client_futher 1")
     client_id = 0
     if auth_token >= min_auth_token_value and find_client(auth_token, connected_clients):
         return True, client_id
 
-    print("allow_client_futher 2")
     if message_type == E_MESSAGE_TYPE.PASSWORD_SENT and payload == correct_password:
         # Generate a random ID for the client
         client_id =  generate_unique_id(min_auth_token_value, max_auth_token_value)   
         add_client(conn, addr, client_id, connected_clients)
         return True, client_id
     
-    print("allow_client_futher 3")
     return False, client_id
 
 
@@ -117,7 +114,7 @@ def listen_clients(conn, addr, client_id):
         print(f"Connection with {addr} closed")
 
 
-def start_server(host='127.0.0.1', port=65432):
+def start_server(host='127.0.0.1', port=65433):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((host, port))
         s.listen()
@@ -135,13 +132,16 @@ def start_server(host='127.0.0.1', port=65432):
             data = conn.recv(1024)
             print("1")
             message_type, message_length, auth_token, payload = decode_message(data)
-            print("2")
+            print(f"2: payload: {payload}")
+            
             allow, client_id = allow_client_futher(conn, addr, message_type, auth_token, payload)
             print("3")
             if allow == False:
+                print("4.1 - not allowed")
                 disconnect_client(conn)
 
             else:
+                print("4.2 - allowed")
                 if message_type == E_MESSAGE_TYPE.PASSWORD_SENT and allow == True:
             
                     print(f"Server generated ID {client_id} for listening on {host}:{port}")
@@ -160,6 +160,6 @@ def start_server(host='127.0.0.1', port=65432):
                 client_thread = threading.Thread(target=listen_clients, args=(conn, addr, client_id))
                 client_thread.start()
 
-
+           
 if __name__ == "__main__":
     start_server()
