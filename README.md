@@ -61,7 +61,7 @@ The game flow is as follows:
 
 
 - GET MATCHES:
-   <img width="547" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ff7541ed-a88f-4fa0-a427-48f92e5e6dd9">
+<img width="547" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ff7541ed-a88f-4fa0-a427-48f92e5e6dd9">
 
 | Server specifics:
 Must offer both Unix socket and a TCP port for client connection.
