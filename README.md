@@ -38,6 +38,8 @@ The game flow is as follows:
 5. The target client - client B - is informed of the match, and can begin guesses
   <img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/df35d6c2-fe23-46a8-bf82-fead35794a98">
 
+<img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/51128088-0328-4b62-a1bb-f29344c698d7">
+
 6. Client A is informed of the progress of Client B (attempts)
 7. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
 8. Match ends when Client B guesses the word, or gives up
