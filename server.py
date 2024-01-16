@@ -84,22 +84,31 @@ def listen_clients(conn, addr, client_id):
                         word_to_guess = " ".join(parts[4:])
                         print(f"62: opponent id: {opponent_id}, word: {word_to_guess}, clint id: {client_id}")
 
-                        if find_client(opponent_id, connected_clients):
+                        isFound, opponentExist = find_client(opponent_id, connected_clients)
+                        
+                        if isFound:
                             print("63")
                             # Start the match and send a success response
                             match_id = generate_unique_match_id(min_auth_token_value, max_auth_token_value)
                             match = start_match(client_id, opponent_id, word_to_guess, match_id, active_matches)
-                            message_to_sent = f"Match started with ID {match_id}. Your word to guess: {word_to_guess}"                            
+                            message_to_sent = f"Match started with ID {match_id}. Your word to guess: {word_to_guess}"
+
+                            # sent invite to an opponent
+                            opponent_conn = opponentExist[1]
+                            invitation_message = f"Invitation to match {match['match_id']} with guess a word. Accept or Decline?"
+                            invitation_data = encode_message(E_MESSAGE_TYPE.MATCH_INVITATION, opponent_id, invitation_message)
+                            opponent_conn.sendall(invitation_data)
+                            print("64")
+
                         else:
                             # Opponent not found, send an error response
-                            print("64")
+                            print("65")
                             message_to_sent = "Opponent not found."
 
 
                 print(f"message before sending: {message_to_sent}")
                 success_message_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, message_to_sent)
                 conn.sendall(success_message_data)
-
 
     except Exception as e:
         print(f"Error handling client {addr}: {str(e)}")

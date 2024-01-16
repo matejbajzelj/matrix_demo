@@ -31,15 +31,3 @@ def is_client_in_match(client_id, active_matches):
             return True
     return False
 
-
-def handle_start_match_request(client_id, opponent_id, word_to_guess):
-    # Check if the specified opponent_id exists in the list of connected clients
-    # and is available for a match (not already in a match)
-    if find_client(opponent_id) and not is_client_in_match(opponent_id):
-        # Create a match between client_id and opponent_id with the specified word to guess
-        match = create_match(client_id, opponent_id, word_to_guess)
-        # Inform both clients about the match
-        inform_clients_about_match(client_id, opponent_id, match['match_id'], word_to_guess)
-    else:
-        # Inform the client that the match request is invalid (opponent not available)
-        send_invalid_match_request_response(client_id)

@@ -14,6 +14,7 @@ class E_MESSAGE_TYPE(Enum):
     ERROR = 6
     GET_USERS = 7
     START_MATCH = 8
+    MATCH_INVITATION = 9
 
 # picked message type and size, picked message length and size of var to make my header.
 # don't know at this time if I need message-type but starting somewhere.

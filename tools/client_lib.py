@@ -16,15 +16,17 @@ def remove_client(client_id, connected_clients):
 
 
 def find_client(client_id, connected_clients):
-    found = False
+    isFound = False
+    clientFound = None
     
     for client in connected_clients:
         if client[0] == client_id:
             print(f"Client {client_id} found")            
-            found = True
+            isFound = True
+            clientFound = client
             break
     
-    return found
+    return isFound, clientFound
 
 
 # Implement your own logic to generate unique IDs for clients
