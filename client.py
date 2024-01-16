@@ -39,6 +39,9 @@ def start_client(host='127.0.0.1', port=65432):
                     break  # Exit the loop and close the client
                 elif message == "get users":
                     message_type = E_MESSAGE_TYPE.GET_USERS
+                elif message.startswith("start match with"):                    
+                    message_type = E_MESSAGE_TYPE.START_MATCH
+
 
                 # Prepare and send the message with the custom binary protocol
                 data_to_send = encode_message(message_type, client_id, message)

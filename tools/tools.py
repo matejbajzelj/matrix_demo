@@ -5,14 +5,15 @@ my_binary_encode_format = '>HHI' # 2bytes, 2bytes, 4 bytes
 my_string_encode_format = 'utf-8'
 
 class E_MESSAGE_TYPE(Enum):
-    AUTHENTICATION_REJECTED = 401
-    PASSWORD_ACCEPETED = 201
-    ASSIGNED_ID = 3
-    NORMAL_COMMUNICATION = 1
-    PASSWORD_SENT = 4
     WELCOME_MESSAGE = 0
-    ERROR = 500
-    GET_USERS = 5
+    AUTHENTICATION_REJECTED = 1
+    PASSWORD_ACCEPETED = 2
+    ASSIGNED_ID = 3
+    NORMAL_COMMUNICATION = 4
+    PASSWORD_SENT = 5    
+    ERROR = 6
+    GET_USERS = 7
+    START_MATCH = 8
 
 # picked message type and size, picked message length and size of var to make my header.
 # don't know at this time if I need message-type but starting somewhere.
@@ -28,7 +29,7 @@ def encode_message(message_type:E_MESSAGE_TYPE, auth_token:int, payload:str):
     # H 16bit int - Assume for demo 0-65535 is enough big int.
     # I 32bit - 4 bytes 4,294,967,295
     header = struct.pack('>HHI', i_message_type, message_length, auth_token) 
-    print(f"Send data: {header + binary_payload}")
+    # print(f"Send data: {header + binary_payload}")
     return header + binary_payload
 
 def decode_message(binary_data):
@@ -43,8 +44,8 @@ def decode_message(binary_data):
 
     # just to have printout in 1 place.
     # print(f"Received b_message: {b_message}")
-    print(f"Received s_message: {s_message}")
-    print(f"Received message_type: {message_type}")
+    print(f"{s_message}")
+    #print(f"{message_type}")
     # print(f"Received message_length: {message_length}")
     # print(f"Received auth_token: {auth_token}")
     

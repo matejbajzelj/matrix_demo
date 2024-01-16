@@ -3,6 +3,7 @@ import threading
 from tools.tools import decode_message, encode_message, E_MESSAGE_TYPE
 from tools.client_lib import find_client, generate_unique_id, add_client, remove_client
 from tools.commands import get_users
+from tools.match import is_client_in_match, start_match, generate_unique_match_id
 
 # Constants
 correct_password = "mypass123"
@@ -11,7 +12,7 @@ max_auth_token_value = 4294967295 # 4 bytes 32 bits
 
 # Create a list to store verified client IDs
 connected_clients = []
-matches = []
+active_matches = []
 
 def allow_client_futher(conn, addr, message_type, auth_token, payload = ""):
 
@@ -70,10 +71,35 @@ def listen_clients(conn, addr, client_id):
                 if message_type == E_MESSAGE_TYPE.GET_USERS:
                     print("51")
                     message_to_sent = get_users(connected_clients)
+                elif message_type == E_MESSAGE_TYPE.START_MATCH:
+                    if is_client_in_match(client_id, active_matches):
+                       # Client is already in a match, send an error response
+                       error_message = "You are already in a match."
+                       error_response_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, error_message)
+                       conn.sendall(error_response_data)
+                    else:
+                        print("61")
+                        parts = payload.split()
+                        opponent_id = int(parts[3])
+                        word_to_guess = " ".join(parts[4:])
+                        print(f"62: opponent id: {opponent_id}, word: {word_to_guess}, clint id: {client_id}")
+
+                        if find_client(opponent_id, connected_clients):
+                            print("63")
+                            # Start the match and send a success response
+                            match_id = generate_unique_match_id(min_auth_token_value, max_auth_token_value)
+                            match = start_match(client_id, opponent_id, word_to_guess, match_id, active_matches)
+                            message_to_sent = f"Match started with ID {match_id}. Your word to guess: {word_to_guess}"                            
+                        else:
+                            # Opponent not found, send an error response
+                            print("64")
+                            message_to_sent = "Opponent not found."
+
 
                 print(f"message before sending: {message_to_sent}")
                 success_message_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, message_to_sent)
                 conn.sendall(success_message_data)
+
 
     except Exception as e:
         print(f"Error handling client {addr}: {str(e)}")
