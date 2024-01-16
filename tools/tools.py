@@ -15,6 +15,12 @@ class E_MESSAGE_TYPE(Enum):
     GET_USERS = 7
     START_MATCH = 8
     MATCH_INVITATION = 9
+    ACCEPT_MATCH = 10
+    DECLINE_MATCH = 11
+    GET_MATCHES = 12
+    GAME_STARED = 13
+    GAME_WON = 14
+    GAME_NOTIFICATION = 15
 
 # picked message type and size, picked message length and size of var to make my header.
 # don't know at this time if I need message-type but starting somewhere.
@@ -45,7 +51,7 @@ def decode_message(binary_data):
 
     # just to have printout in 1 place.
     # print(f"Received b_message: {b_message}")
-    print(f"{s_message}")
+    # print(f"{s_message}")
     # print(f"Received message_type: {message_type}")
     # print(f"Received message_length: {message_length}")
     # print(f"Received auth_token: {auth_token}")
