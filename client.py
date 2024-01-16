@@ -3,7 +3,7 @@ import select
 import sys
 from tools.tools import decode_message, encode_message, E_MESSAGE_TYPE
 
-def start_client(host='127.0.0.1', port=65432):
+def start_client(host='127.0.0.1', port=65433):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((host, port))
     client_socket.setblocking(0)  # Set socket to non-blocking mode
@@ -11,6 +11,13 @@ def start_client(host='127.0.0.1', port=65432):
     inputs = [client_socket, sys.stdin]
     outputs = []
     client_id = 0
+
+    # Prompt for the password
+    password = input("Enter your password: ")
+
+    # Prepare and send the password with the custom binary protocol
+    password_data = encode_message(E_MESSAGE_TYPE.PASSWORD_SENT, client_id, password)
+    client_socket.sendall(password_data)
 
     try:
         while True:
