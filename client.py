@@ -3,7 +3,7 @@ import select
 import sys
 from tools.tools import decode_message, encode_message, E_MESSAGE_TYPE
 
-LISTEN_PORT = 65432
+LISTEN_PORT = 65433
 
 def start_client(host='127.0.0.1', port=LISTEN_PORT):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -13,6 +13,7 @@ def start_client(host='127.0.0.1', port=LISTEN_PORT):
     inputs = [client_socket, sys.stdin]
     outputs = []
     client_id = 0
+    is_game_started = False
 
     # Prompt for the password
     password = input("Enter your password: ")
@@ -40,6 +41,10 @@ def start_client(host='127.0.0.1', port=LISTEN_PORT):
                         print(f"Client id stored: {client_id}")
                     elif message_type == E_MESSAGE_TYPE.NORMAL_COMMUNICATION:
                         print(f"{response}")
+                    elif message_type == E_MESSAGE_TYPE.GAME_STARED:
+                        is_game_started = True
+                        print(f"Received GAME IS STARTED Notice with MatchId: {response}")
+
                     elif message_type == E_MESSAGE_TYPE.MATCH_INVITATION:
                         print(f"Received match invitation: {response}")
                          # Parse the match ID from the invitation message
@@ -49,7 +54,7 @@ def start_client(host='127.0.0.1', port=LISTEN_PORT):
                         
                          # Display the invitation message and offer options to accept or decline
                         print(f"Do you want to accept the match with id: {match_id}? (yes/no)")
-                        user_input = input()
+                        user_input = input("")
                         
                         if user_input.lower() == "yes":
                             # Send an acceptance message to the server
@@ -63,7 +68,7 @@ def start_client(host='127.0.0.1', port=LISTEN_PORT):
 
                 elif s is sys.stdin:
                     # User entered a message
-                    message = input("Enter a message to send to the server (or 'exit' to quit): ")
+                    message = input("")
                     if message == 'exit':
                         return
 
@@ -74,6 +79,8 @@ def start_client(host='127.0.0.1', port=LISTEN_PORT):
                         message_type = E_MESSAGE_TYPE.START_MATCH
                     elif message == "get matches":
                         message_type = E_MESSAGE_TYPE.GET_MATCHES
+                    elif is_game_started == True:
+                        message_type = E_MESSAGE_TYPE.GAME_STARED
 
                     data_to_send = encode_message(message_type, client_id, message)
                     client_socket.send(data_to_send)
