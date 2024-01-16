@@ -34,11 +34,14 @@ def start_client(host='127.0.0.1', port=65432):
                 # Prompt for user input
                 message = input("Enter a message to send to the server (or 'exit' to quit):")
 
+                message_type = E_MESSAGE_TYPE.NORMAL_COMMUNICATION
                 if message == 'exit':
                     break  # Exit the loop and close the client
+                elif message == "get users":
+                    message_type = E_MESSAGE_TYPE.GET_USERS
 
                 # Prepare and send the message with the custom binary protocol
-                data_to_send = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, message)
+                data_to_send = encode_message(message_type, client_id, message)
                 s.sendall(data_to_send)
 
                 # Receive a response

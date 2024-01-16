@@ -12,13 +12,14 @@ class E_MESSAGE_TYPE(Enum):
     PASSWORD_SENT = 4
     WELCOME_MESSAGE = 0
     ERROR = 500
+    GET_USERS = 5
 
 # picked message type and size, picked message length and size of var to make my header.
 # don't know at this time if I need message-type but starting somewhere.
 # types could be "ping or heartbeat", "error", "auth", "game related message"...
 
 def encode_message(message_type:E_MESSAGE_TYPE, auth_token:int, payload:str):
-    print(f"encode_message: {payload}")
+    # print(f"encode_message: {payload}")
     # message_type is an integer (0-255), payload is in string
     binary_payload = payload.encode(my_string_encode_format)
     message_length = len(binary_payload)
@@ -41,10 +42,10 @@ def decode_message(binary_data):
     message_type = E_MESSAGE_TYPE(i_message_type)
 
     # just to have printout in 1 place.
-    print(f"Received b_message: {b_message}")
+    # print(f"Received b_message: {b_message}")
     print(f"Received s_message: {s_message}")
     print(f"Received message_type: {message_type}")
-    print(f"Received message_length: {message_length}")
-    print(f"Received auth_token: {auth_token}")
+    # print(f"Received message_length: {message_length}")
+    # print(f"Received auth_token: {auth_token}")
     
     return message_type, message_length, auth_token, s_message
