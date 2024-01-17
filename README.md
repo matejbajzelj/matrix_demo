@@ -53,7 +53,9 @@ The game flow is as follows:
 
 8. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
 9. Match ends when Client B guesses the word, or gives up
-10. Command "get matches"
+<img width="1598" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ef1fce70-4ba7-4524-aab8-2f4837a49cd6">
+
+11. Command "get matches"
 
 
 - Client B receiving invitation
