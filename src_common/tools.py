@@ -1,8 +1,13 @@
 import struct
 from enum import Enum
 
+# Constants
 my_binary_encode_format = '>HHI' # 2bytes, 2bytes, 4 bytes
 my_string_encode_format = 'utf-8'
+correct_password = "pass123"
+min_auth_token_value = 1000000000
+max_auth_token_value = 4294967295 # 4 bytes 32 bits
+LISTEN_PORT = 65433
 
 class E_MESSAGE_TYPE(Enum):
     WELCOME_MESSAGE = 0

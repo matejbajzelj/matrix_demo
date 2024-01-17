@@ -34,23 +34,13 @@ def find_match(match_id, matches):
     matchFound = None
 
     try:
-        print(f"find_match 1 match_id: {match_id}")
-        print(f"find_match 1 match count: {len(matches)}")
         for match in matches:
-            print("find_match 2")
-            print(f"find_match 2: ID {match['match_id']}")
-
             array_match_id = match['match_id'] 
-            print(f"find_match 2: array_match_id {array_match_id}")
-            print(f"find_match 2: array_match_id==match_id {int(array_match_id)==int(match_id)}")
-
             if int(match['match_id']) == int(match_id):
-                print("find_match 3 Found")
                 isFound = True
                 matchFound = match
                 break
 
-        print("find_match 4")
         return isFound, matchFound
     except Exception as e:
         print(f"Error in find_match: {str(e)}")
@@ -62,19 +52,12 @@ def find_match_by_invited_id(client_b_id, matches):
     matchFound = None
 
     try:
-        print(f"find_match_by_invited_id 1 client_b_id: {client_b_id}")
-        print(f"find_match_by_invited_id 1 match count: {len(matches)}")
         for match in matches:
-            print("find_match_by_invited_id 2")
-            print(f"find_match_by_invited_id 2: client_b_id {match['client_b_id']}")
-
             if int(match['client_b_id']) == int(client_b_id):
-                print("find_match_by_invited_id 3 Found client_b_id")
                 isFound = True
                 matchFound = match
                 break
 
-        print("find_match_by_invited_id 4")
         return isFound, matchFound
     except Exception as e:
         print(f"Error in find_match_by_invited_id: {str(e)}")
@@ -83,16 +66,10 @@ def find_match_by_invited_id(client_b_id, matches):
 
 
 def remove_match(match_id, active_matches):
-    print(f"remove_match 1 match_id: {match_id}")
-    print(f"remove_match 1 match len: {len(active_matches)}")
     for match in active_matches:
-        print("remove_match 2")
         if int(match['match_id']) == int(match_id):
-            print("remove_match Found match_id")
             active_matches.remove(match)
-            print(f"remove_match {match_id} removed")
-
-
+    
 def is_client_in_match(client_id, active_matches):
     for match in active_matches:
         # Check if either of the clients in the match matches the specified client_id

@@ -21,7 +21,7 @@ def find_client(client_id, connected_clients):
     
     for client in connected_clients:
         if client[0] == client_id:
-            print(f"Client {client_id} found")            
+            print(f"Client {client_id} found")
             isFound = True
             clientFound = client
             break
@@ -35,6 +35,3 @@ def generate_unique_id(min_auth_token_value, max_auth_token_value):
     client_id = random.randint(min_auth_token_value, max_auth_token_value)        
 
     return client_id
-
-
-
