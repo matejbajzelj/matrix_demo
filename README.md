@@ -63,8 +63,6 @@ The game flow is as follows:
 - Client B receiving invitation
 <img width="592" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/382bfc62-5677-4cfb-8739-fc7fa2b9c411">
 
-
-
 | Server specifics:
 Implemented. You can specify TCP (with host, port) or Unix (path) or leave empty with default. 
 
@@ -76,6 +74,7 @@ Optional/bonus: offer a website that displays the progress of all the matches, f
 
 | Client specifics:
 Must be able to connect to either Unix socket or a TCP port.
+Implemented. You can specify TCP (with host, port) or Unix (path) or leave empty with default. 
 
 RUNTIME:
 
