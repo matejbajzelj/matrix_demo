@@ -11,6 +11,60 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "Python: Server.py TCP mode",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/server.py",
+            "args": ["true"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Server.py UNIX mode",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/server.py",
+            "args": ["false"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Client.py TCP mode",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/client.py",
+            "args": ["true"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Client.py UNIX mode",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/client.py",
+            "args": ["false"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Python: TCP Mode (Server & Client)",
+            "configurations": ["Python: Server.py TCP mode", "Python: Client.py TCP mode"]
+        },
+        {
+            "name": "Python: UNIX Mode (Server & Client)",
+            "configurations": ["Python: Server.py UNIX mode", "Python: Client.py UNIX mode"]
+        },
+        {
+            "name": "Python: TCP Mode (Server & 2x Client)",
+            "configurations": ["Python: Server.py TCP mode", "Python: Client.py TCP mode", "Python: Client.py TCP mode"]
+        },
+        {
+            "name": "Python: UNIX Mode (Server & 2x Client)",
+            "configurations": ["Python: Server.py UNIX mode", "Python: Client.py UNIX mode", "Python: Client.py UNIX mode"]
         }
     ]
 }

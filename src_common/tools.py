@@ -1,13 +1,6 @@
 import struct
 from enum import Enum
-
-# Constants
-my_binary_encode_format = '>HHI' # 2bytes, 2bytes, 4 bytes
-my_string_encode_format = 'utf-8'
-correct_password = "pass123"
-min_auth_token_value = 1000000000
-max_auth_token_value = 4294967295 # 4 bytes 32 bits
-LISTEN_PORT = 65433
+from src_common.constants import BINARY_ENCODE_FORMAT, STRING_ENCODE_FORMAT
 
 class E_MESSAGE_TYPE(Enum):
     WELCOME_MESSAGE = 0
@@ -30,27 +23,27 @@ class E_MESSAGE_TYPE(Enum):
 # picked message type and size, picked message length and size of var to make my header.
 # don't know at this time if I need message-type but starting somewhere.
 # types could be "ping or heartbeat", "error", "auth", "game related message"...
-
+# # Big-endian: 2 byte for type, 2 bytes for length, 4 byte for auth_token. 
 def encode_message(message_type:E_MESSAGE_TYPE, auth_token:int, payload:str):
     # print(f"encode_message: {payload}")
     # message_type is an integer (0-255), payload is in string
-    binary_payload = payload.encode(my_string_encode_format)
+    binary_payload = payload.encode(STRING_ENCODE_FORMAT)
     message_length = len(binary_payload)
     i_message_type = int(message_type.value)
-    # Big-endian: 2 byte for type, 2 bytes for length, 4 byte for auth_token. 
+    # B  8bit int - Assume for demo 0-255 is enough.
     # H 16bit int - Assume for demo 0-65535 is enough big int.
     # I 32bit - 4 bytes 4,294,967,295
-    header = struct.pack(my_binary_encode_format, i_message_type, message_length, auth_token) 
+    header = struct.pack(BINARY_ENCODE_FORMAT, i_message_type, message_length, auth_token) 
     # print(f"Send data: {header + binary_payload}")
     return header + binary_payload
 
 def decode_message(binary_data):
     
     # Assuming binary_data is a bytes object containing a full message
-    # first 8 bytes are (2 message type, 2 payload length, 4 bytes auth token) header
-    i_message_type, message_length, auth_token = struct.unpack(my_binary_encode_format, binary_data[:8])
-    b_message = binary_data[8:8+message_length]
-    s_message = b_message.decode(my_string_encode_format)
+    # first 7 bytes are (1bytes message type, 2bytes payload length, 4bytes auth token) header
+    i_message_type, message_length, auth_token = struct.unpack(BINARY_ENCODE_FORMAT, binary_data[:7])
+    b_message = binary_data[7:7+message_length]
+    s_message = b_message.decode(STRING_ENCODE_FORMAT)
     
     message_type = E_MESSAGE_TYPE(i_message_type)
 

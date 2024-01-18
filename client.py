@@ -2,11 +2,17 @@ import socket
 import select
 import sys
 from src_client.client_logic import client_receive, client_sent
-from src_common.tools import encode_message, E_MESSAGE_TYPE, LISTEN_PORT
+from src_common.messages import get_server_notification, get_welcome_message, get_starting_server_info
+from src_common.constants import TCP_ENABLED, TCP_PORT, TCP_HOST, UNIX_PATH
 
-def start_client(host='127.0.0.1', port=LISTEN_PORT):
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((host, port))
+def start_client(tcp_enabled:bool, tcp_port:int, tcp_host:str, unix_path:str):
+    if tcp_enabled:
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect((tcp_host, tcp_port))
+    else:
+        client_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        client_socket.connect(unix_path)
+        
     client_socket.setblocking(0)  # Set socket to non-blocking mode
 
     inputs = [client_socket, sys.stdin]
@@ -56,4 +62,27 @@ def start_client(host='127.0.0.1', port=LISTEN_PORT):
         client_socket.close()
 
 if __name__ == "__main__":
-    start_client()
+    # USE TCP:  paython client.py true 65433 127.0.0.1
+    # USE UNIX: paython client.py false /tmp/my_unix_socket.sock
+    tcp_enabled = TCP_ENABLED
+    tcp_port = TCP_PORT
+    tcp_host = TCP_HOST
+    unix_path = UNIX_PATH
+    
+    if len(sys.argv) > 1:
+        tcp_enabled = sys.argv[1].lower() == 'true'
+    else:
+        tcp_enabled = False         
+        
+    if tcp_enabled and len(sys.argv) > 2:
+        tcp_port = int(sys.argv[2])
+    
+    elif tcp_enabled == False and len(sys.argv) > 2:
+        unix_path = sys.argv[2]
+        
+    if tcp_enabled and len(sys.argv) > 3:
+        tcp_host = sys.argv[3]
+    
+    message = get_starting_server_info("Client", tcp_enabled, tcp_port, tcp_host, unix_path)
+    print (message)
+    start_client(tcp_enabled, tcp_port, tcp_host, unix_path)

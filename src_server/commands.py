@@ -1,3 +1,4 @@
+import socket, struct
 
 def get_users(connected_clients):
     user_info_list = []
@@ -8,8 +9,21 @@ def get_users(connected_clients):
     else:        
         for client_info in connected_clients:
             client_id, _, client_addr = client_info
-            user_info = f"Client ID: {client_id}, Address: {client_addr[0]}, Port: {client_addr[1]}"
-            user_info_list.append(user_info)
+            family = str(client_info[1].family)
+            print(family)
+            if family == "AddressFamily.AF_UNIX":
+                print("inside AddressFamily.AF_UNIX")
+                conn = client_info[1]
+                #user_info = f"Client ID: {client_id}, Address: {client_addr[0]}, Port: {client_addr[1]}"
+                SO_PEERCRED = 17  # Socket option
+                creds = conn.getsockopt(socket.SOL_SOCKET, SO_PEERCRED, struct.calcsize('3i'))                
+                pid, uid, gid = struct.unpack('3i', creds)
+                user_info = f"Client ID: {client_id}, pid:{pid}"
+                user_info_list.append(user_info)
+            else:
+                print("inside AddressFamily.AF_INET")
+                user_info = f"Client ID: {client_id}, Address: {client_addr[0]}, Port: {client_addr[1]}"
+                user_info_list.append(user_info)
     
     user_info_list.append("\n-----------------------End User List----------------------------\n")
     # Send the list of connected users back to the client

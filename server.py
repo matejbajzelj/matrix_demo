@@ -1,10 +1,14 @@
 import socket
+import sys
+import os
 import threading
-from src_common.tools import LISTEN_PORT, decode_message, encode_message, E_MESSAGE_TYPE, correct_password, min_auth_token_value, max_auth_token_value 
+from src_common.constants import TCP_ENABLED, TCP_PORT, TCP_HOST, UNIX_PATH
+from src_common.tools import decode_message, encode_message, E_MESSAGE_TYPE
+from src_common.messages import get_server_notification, get_welcome_message, get_starting_server_info
 from src_server.client_lib import remove_client
 from src_server.commands import get_users, get_matches
 from src_server.match import remove_match
-from src_server.server_logic import get_server_notification, server_action_accepted_match, server_action_game_started, server_action_start_match, allow_client_futher, get_welcome_message
+from src_server.server_logic import server_action_accepted_match, server_action_game_started, server_action_start_match, allow_client_futher
 
 # Create a list to store verified client IDs
 connected_clients = []
@@ -31,6 +35,7 @@ def listen_clients(conn, addr):
             if not data:
                 break
 
+            message_to_sent = ""
             message_type, message_length, auth_token, message_from_client = decode_message(data)
             
             allow, client_id = allow_client_futher(conn, addr, message_type, auth_token, connected_clients, message_from_client)
@@ -83,25 +88,59 @@ def listen_clients(conn, addr):
         print(f"Connection with {addr} closed")
 
 
-def start_server(host='127.0.0.1', port=LISTEN_PORT):
-    # with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        # Set SO_REUSEADDR option to allow reusing the same port
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind((host, port))
-        s.listen()
+def start_server(tcp_enabled:bool, tcp_port:int, tcp_host:str, unix_path:str):
+    
+    if tcp_enabled:
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket.bind((tcp_host, tcp_port))
+        server_socket.listen()
+        # print(f"TCP socket server is listening on {host}:{tcp_port}")
+    else:
+        # Delete the existing socket file if it exists
+        if os.path.exists(unix_path):
+            os.remove(unix_path)
+    
+        server_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket.bind(unix_path)
+        server_socket.listen()
+        print(f"Unix socket server is listening on {unix_path}")
 
-        print(f"Server listening on {host}:{port}")
-
-        while True:
-            conn, addr = s.accept()
+    while True:
+        client_socket, addr = server_socket.accept()
+        
+        # welcome message
+        welcome_message = get_welcome_message(addr)
+        response = encode_message(E_MESSAGE_TYPE.WELCOME_MESSAGE, 0, welcome_message)
+        client_socket.sendall(response)
             
-            welcome_message = get_welcome_message(addr)
-            response = encode_message(E_MESSAGE_TYPE.WELCOME_MESSAGE, 0, welcome_message)
-            conn.sendall(response)
-            
-            client_thread = threading.Thread(target=listen_clients, args=(conn, addr))
-            client_thread.start()
+        client_thread = threading.Thread(target=listen_clients, args=(client_socket, addr))
+        client_thread.start()
            
 if __name__ == "__main__":
-    start_server()
+    
+    # USE TCP:  paython server.py true 65433 127.0.0.1
+    # USE UNIX: paython server.py false /tmp/my_unix_socket.sock
+    tcp_enabled = TCP_ENABLED
+    tcp_port = TCP_PORT
+    tcp_host = TCP_HOST
+    unix_path = UNIX_PATH
+    
+    if len(sys.argv) > 1:
+        tcp_enabled = sys.argv[1].lower() == 'true'
+    else:
+        tcp_enabled = False         
+        
+    if tcp_enabled and len(sys.argv) > 2:
+        tcp_port = int(sys.argv[2])
+    
+    elif tcp_enabled == False and len(sys.argv) > 2:
+        unix_path = sys.argv[2]
+        
+    if tcp_enabled and len(sys.argv) > 3:
+        tcp_host = sys.argv[3]
+        
+    message = get_starting_server_info("Server", tcp_enabled, tcp_port, tcp_host, unix_path)
+    print (message)
+    start_server(tcp_enabled, tcp_port, tcp_host, unix_path)

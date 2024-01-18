@@ -1,31 +1,16 @@
-from src_common.tools import E_MESSAGE_TYPE, encode_message, min_auth_token_value, max_auth_token_value, correct_password
+from src_common.constants import MIN_AUTH_TOKEN_VALUE, MAX_AUTH_TOKEN_VALUE, PASSWORD
+from src_common.tools import E_MESSAGE_TYPE, encode_message
 from src_server.client_lib import find_client, generate_unique_id, add_client
 from src_server.match import is_client_in_match, find_match, find_match_by_invited_id, generate_unique_match_id, start_match
 
-def get_welcome_message(addr):
-    message = []
-    message.append("\n-----------------------Welcome message--------------------------\n")
-    message.append( f"Initiating the communication. Client {addr} Send password")
-    message.append("\n-----------------------End Welcome message----------------------\n")
-    message_response = "".join(message)
-    return message_response
-
-def get_server_notification(message_to_sent):
-    message = []
-    message.append("\n-----------------------Server Warning--------------------------\n")
-    message.append( f"{message_to_sent}")
-    message.append("\n-----------------------End Server Warning----------------------\n")
-    message_response = "".join(message)
-    return message_response
-
 def allow_client_futher(conn, addr, message_type, auth_token, connected_clients, message_from_client = ""):
 
-    if auth_token >= min_auth_token_value and find_client(auth_token, connected_clients):
+    if auth_token >= MIN_AUTH_TOKEN_VALUE and find_client(auth_token, connected_clients):
         return True, auth_token
 
-    if message_type == E_MESSAGE_TYPE.PASSWORD_SENT and message_from_client == correct_password:
+    if message_type == E_MESSAGE_TYPE.PASSWORD_SENT and message_from_client == PASSWORD:
         # Generate a random ID for the client
-        client_id =  generate_unique_id(min_auth_token_value, max_auth_token_value)   
+        client_id =  generate_unique_id(MIN_AUTH_TOKEN_VALUE, MAX_AUTH_TOKEN_VALUE)   
         add_client(conn, addr, client_id, connected_clients)
         return True, client_id
     
@@ -46,7 +31,7 @@ def server_action_start_match(conn, client_id, message_from_client, auth_token, 
         
         if isFound:
             # Start the match and send a success response
-            match_id = generate_unique_match_id(min_auth_token_value, max_auth_token_value)
+            match_id = generate_unique_match_id(MIN_AUTH_TOKEN_VALUE, MAX_AUTH_TOKEN_VALUE)
             match = start_match(auth_token, opponent_id, word_to_guess, match_id, active_matches)
             message_to_sent = f"Match started with ID {match_id}. Your word to guess: {word_to_guess}"
 

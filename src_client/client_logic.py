@@ -67,5 +67,9 @@ def client_sent(client_socket, message_for_server, client_id, is_game_started):
     elif is_game_started == True:
         message_type = E_MESSAGE_TYPE.GAME_STARED
 
+    else:
+        print("No known command.")
+        return
+
     data_to_send = encode_message(message_type, client_id, message_for_server)
     client_socket.send(data_to_send)
