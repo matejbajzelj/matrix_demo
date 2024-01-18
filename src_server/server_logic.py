@@ -2,6 +2,7 @@ from src_common.constants import MIN_AUTH_TOKEN_VALUE, MAX_AUTH_TOKEN_VALUE, PAS
 from src_common.tools import E_MESSAGE_TYPE, encode_message
 from src_server.client_lib import find_client, generate_unique_id, add_client
 from src_server.match import is_client_in_match, find_match_by_id, generate_unique_match_id, start_match
+from src_common.messages import get_server_notification
 
 def allow_client_futher(conn, addr, message_type, auth_token, connected_clients, message_from_client = ""):
 
@@ -53,18 +54,27 @@ def server_action_accepted_match(accepted_match_id, active_matches, connected_cl
     isMatchFound, matchFound = find_match_by_id(accepted_match_id, 'match_id', active_matches)
     matchFound["state"] = "active" # set status
 
-    started_client_id = matchFound["client_a_id"]
-    invited_client_id = matchFound["client_b_id"]
+    client_a_id = matchFound["client_a_id"]
+    client_b_id = matchFound["client_b_id"]
 
     # sent to client messate_Type
     # startedIsFound, started_client = find_client(started_client_id, connected_clients)           
     # invitation_data = encode_message(E_MESSAGE_TYPE.GAME_STARED, started_client_id, accepted_match_id)
     # staring_person_conn.sendall(invitation_data)
 
-    invitedIsFound, invited_client = find_client(invited_client_id, connected_clients)
-    invited_person_conm = invited_client[1]
-    invitation_data = encode_message(E_MESSAGE_TYPE.GAME_STARED, invited_client_id, accepted_match_id)
-    invited_person_conm.sendall(invitation_data)
+    is_client_a_found, client_a = find_client(client_a_id, connected_clients)
+    client_a_conn = client_a[1]
+    
+    is_client_b_found, client_b = find_client(client_b_id, connected_clients)
+    client_b_conn = client_b[1]
+    
+    message_to_send_to_a = get_server_notification(f"Match with id {accepted_match_id} started. You will be notified about progress")    
+    client_a_message = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_b_id, message_to_send_to_a)
+    client_a_conn.sendall(client_a_message)
+    
+    message_to_send_to_b = get_server_notification(f"Match with id {accepted_match_id} started. Try to guess a word.")    
+    client_b_message = encode_message(E_MESSAGE_TYPE.GAME_STARED, client_b_id, message_to_send_to_b)
+    client_b_conn.sendall(client_b_message)
         
 def server_action_game_started(guess_word, auth_token, active_matches, connected_clients):
     isMatchFound, matchFound = find_match_by_id(auth_token, 'client_b_id', active_matches)
@@ -78,6 +88,8 @@ def server_action_game_started(guess_word, auth_token, active_matches, connected
     staring_person_conn = started_client[1]
                         
     if (matchFound['word_to_guess'] == guess_word):
+                
+        matchFound["state"] = "won" # set status        
         invitation_data = encode_message(E_MESSAGE_TYPE.GAME_WON, auth_token, "You found a word. You WON!")
         invited_person_conm.sendall(invitation_data)
 

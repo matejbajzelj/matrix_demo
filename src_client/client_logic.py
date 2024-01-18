@@ -17,7 +17,10 @@ def client_receive(client_socket:socket.socket, data_from_server:str, client_id:
         print(f"{response}")
 
     elif message_type == E_MESSAGE_TYPE.GAME_NOTIFICATION:
-        hints_enabled = True
+        print(f"{response}")
+        
+    elif message_type == E_MESSAGE_TYPE.GAME_WON:
+        is_game_started = False        
         print(f"{response}")
         
     elif message_type == E_MESSAGE_TYPE.WELCOME_MESSAGE:

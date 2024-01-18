@@ -26,10 +26,11 @@ def get_welcome_message(addr):
     message_response = "".join(message)
     return message_response
 
+
 def get_server_notification(message_to_sent):
     message = []
-    message.append("\n-----------------------Server Warning--------------------------\n")
+    message.append("\n-----------------------Server Notification--------------------------\n")
     message.append( f"{message_to_sent}")
-    message.append("\n-----------------------End Server Warning----------------------\n")
+    message.append("\n-----------------------End Server Notification----------------------\n")
     message_response = "".join(message)
     return message_response
