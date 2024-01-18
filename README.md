@@ -53,18 +53,24 @@ The game flow is as follows:
 
 8. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
 9. Match ends when Client B guesses the word, or gives up
-10. Command "get matches"
+<img width="1598" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ef1fce70-4ba7-4524-aab8-2f4837a49cd6">
 
+<img width="1460" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/3c61738c-acab-4fa8-9cb2-e87d47b30953">
+
+11. Command "get matches"
+<img width="547" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ff7541ed-a88f-4fa0-a427-48f92e5e6dd9">
 
 - Client B receiving invitation
 <img width="592" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/382bfc62-5677-4cfb-8739-fc7fa2b9c411">
 
 
-- GET MATCHES:
-<img width="547" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ff7541ed-a88f-4fa0-a427-48f92e5e6dd9">
 
 | Server specifics:
-Must offer both Unix socket and a TCP port for client connection.
+Implemented. You can specify TCP (with host, port) or Unix (path) or leave empty with default. 
+
+<img width="424" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/812fa508-e23d-4a2d-a6c1-86333073540d">
+
+<img width="396" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/b98eebf3-d4a4-44f0-b95f-63e6ede94915">
 
 Optional/bonus: offer a website that displays the progress of all the matches, for a third party to observe.
 
