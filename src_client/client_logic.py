@@ -14,7 +14,11 @@ def client_receive(client_socket:socket.socket, data_from_server:str, client_id:
         
     elif message_type == E_MESSAGE_TYPE.GAME_STARED:
         is_game_started = True        
-        print(f"Received GAME IS STARTED Notice with MatchId: {response}")
+        print(f"{response}")
+
+    elif message_type == E_MESSAGE_TYPE.GAME_NOTIFICATION:
+        hints_enabled = True
+        print(f"{response}")
         
     elif message_type == E_MESSAGE_TYPE.WELCOME_MESSAGE:
         got_welcome_message = True
@@ -28,12 +32,12 @@ def client_receive(client_socket:socket.socket, data_from_server:str, client_id:
 
     elif message_type == E_MESSAGE_TYPE.MATCH_INVITATION:
         print(f"Received match invitation: {response}")
-            # Parse the match ID from the invitation message
+        # Parse the match ID from the invitation message
         match_id_start = response.find("#") + 1
         match_id_end = response.find("#", match_id_start)
         match_id = response[match_id_start:match_id_end]
         
-            # Display the invitation message and offer options to accept or decline
+        # Display the invitation message and offer options to accept or decline
         print(f"Do you want to accept the match with id: {match_id}? (yes/no)")
         user_input = input("Command: ")
         
@@ -66,6 +70,9 @@ def client_sent(client_socket, message_for_server, client_id, is_game_started):
         
     elif is_game_started == True:
         message_type = E_MESSAGE_TYPE.GAME_STARED
+
+    elif message_for_server.startswith("send hint:"):
+        message_type = E_MESSAGE_TYPE.GAME_SENT_HINT
 
     else:
         print("No known command.")

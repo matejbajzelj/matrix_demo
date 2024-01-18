@@ -8,7 +8,7 @@ from src_common.messages import get_server_notification, get_welcome_message, ge
 from src_server.client_lib import remove_client
 from src_server.commands import get_users, get_matches
 from src_server.match import remove_match
-from src_server.server_logic import server_action_accepted_match, server_action_game_started, server_action_start_match, allow_client_futher
+from src_server.server_logic import server_action_sent_hint, server_action_accepted_match, server_action_game_started, server_action_start_match, allow_client_futher
 
 # Create a list to store verified client IDs
 connected_clients = []
@@ -74,6 +74,9 @@ def listen_clients(conn, addr):
                 elif message_type == E_MESSAGE_TYPE.GAME_STARED:
                     skip_last_response = True
                     server_action_game_started(message_from_client, auth_token, active_matches, connected_clients)
+                
+                elif message_type == E_MESSAGE_TYPE.GAME_SENT_HINT:
+                    server_action_sent_hint(message_from_client, auth_token, active_matches, connected_clients)
 
                 if skip_last_response == False :                    
                     success_message_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, message_to_sent)

@@ -29,14 +29,14 @@ def generate_unique_match_id(min_auth_token_value, max_auth_token_value):
 
     return match_id
 
-def find_match(match_id, matches):
+    
+def find_match_by_id(search_value, column_name, matches):
     isFound = False
     matchFound = None
 
     try:
         for match in matches:
-            array_match_id = match['match_id'] 
-            if int(match['match_id']) == int(match_id):
+            if int(match[column_name]) == int(search_value):
                 isFound = True
                 matchFound = match
                 break
@@ -45,25 +45,7 @@ def find_match(match_id, matches):
     except Exception as e:
         print(f"Error in find_match: {str(e)}")
         # Handle the error here if needed
-        return False, matchFound
-
-def find_match_by_invited_id(client_b_id, matches):
-    isFound = False
-    matchFound = None
-
-    try:
-        for match in matches:
-            if int(match['client_b_id']) == int(client_b_id):
-                isFound = True
-                matchFound = match
-                break
-
-        return isFound, matchFound
-    except Exception as e:
-        print(f"Error in find_match_by_invited_id: {str(e)}")
-        # Handle the error here if needed
-        return False, matchFound        
-
+        return False, matchFound    
 
 def remove_match(match_id, active_matches):
     for match in active_matches:

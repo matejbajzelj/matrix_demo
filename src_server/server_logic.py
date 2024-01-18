@@ -1,7 +1,7 @@
 from src_common.constants import MIN_AUTH_TOKEN_VALUE, MAX_AUTH_TOKEN_VALUE, PASSWORD
 from src_common.tools import E_MESSAGE_TYPE, encode_message
 from src_server.client_lib import find_client, generate_unique_id, add_client
-from src_server.match import is_client_in_match, find_match, find_match_by_invited_id, generate_unique_match_id, start_match
+from src_server.match import is_client_in_match, find_match_by_id, generate_unique_match_id, start_match
 
 def allow_client_futher(conn, addr, message_type, auth_token, connected_clients, message_from_client = ""):
 
@@ -50,7 +50,7 @@ def server_action_start_match(conn, client_id, message_from_client, auth_token, 
 
 def server_action_accepted_match(accepted_match_id, active_matches, connected_clients):
     
-    isMatchFound, matchFound = find_match(accepted_match_id, active_matches)
+    isMatchFound, matchFound = find_match_by_id(accepted_match_id, 'match_id', active_matches)
     matchFound["state"] = "active" # set status
 
     started_client_id = matchFound["client_a_id"]
@@ -67,7 +67,8 @@ def server_action_accepted_match(accepted_match_id, active_matches, connected_cl
     invited_person_conm.sendall(invitation_data)
         
 def server_action_game_started(guess_word, auth_token, active_matches, connected_clients):
-    isMatchFound, matchFound = find_match_by_invited_id(auth_token, active_matches)
+    isMatchFound, matchFound = find_match_by_id(auth_token, 'client_b_id', active_matches)
+    
     started_client_id = matchFound['client_a_id']
 
     invitedIsFound, invited_client = find_client(auth_token, connected_clients)
@@ -90,3 +91,16 @@ def server_action_game_started(guess_word, auth_token, active_matches, connected
         staring_person_data = encode_message(E_MESSAGE_TYPE.GAME_NOTIFICATION, started_client_id, f"Wrong word. Client B had {matchFound['client_b_tries']} tries")
         staring_person_conn.sendall(staring_person_data)
     
+    
+def server_action_sent_hint(message_from_client_a, auth_token, active_matches, connected_clients):
+    
+    isMatchFound, foundMatch = find_match_by_id(auth_token, 'client_a_id', active_matches)
+    client_b_id = foundMatch['client_b_id']
+    
+    isClientBFound, client_b = find_client(client_b_id, connected_clients)
+    client_b_conn = client_b[1]
+    
+    sent_hint = encode_message(E_MESSAGE_TYPE.GAME_NOTIFICATION, client_b_id, message_from_client_a)
+    client_b_conn.sendall(sent_hint)
+    
+    print(f"{message_from_client_a}")
