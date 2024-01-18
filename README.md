@@ -27,30 +27,26 @@ The main function of the server at this moment - is to facilitate game of "Guess
 The game flow is as follows:
 
 1. Client A requests a list of possible opponents (IDs) - command "get users"
-<img width="372" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/5ae01bcb-e74a-4000-ad1c-abeeb2c0f373">
+2. Server responds with a list of possible opponents (IDs)
+<img width="410" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/5582df4f-20d8-4d58-a53d-e12f7edd6fa5">
 
-3. Server responds with a list of possible opponents (IDs)
-<img width="372" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/abe80236-a09a-44cb-af9e-327fd80e833c">
-
-5. Client A requests a match with opponent (ID), specifying a word to guess - command "starting match with {id} {word}"
-<img width="700" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/595eb46e-822e-4e61-9ebd-1ed9a8caa3d5">
+3. Client A requests a match with opponent (ID), specifying a word to guess - command "starting match with {id} {word}"
+<img width="222" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/cac7fa73-0762-4409-93a9-7e83517252f8">
    
-6. Server either confirms this or rejects with an error code
-  
-8. The target client - client B - is informed of the match, and can begin guesses
-<img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/df35d6c2-fe23-46a8-bf82-fead35794a98">
+4. Server either confirms this or rejects with an error code. I made that clientB gets invitation, so he can declined or accept.
+  <img width="462" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/b46e9019-b43a-43ef-969e-2764f150c545">
 
-<img width="441" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/51128088-0328-4b62-a1bb-f29344c698d7">
+5. The target client - client B - is informed of the match, and can begin guesses
+<img width="417" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/16962d26-4399-411c-b7c8-58bb72ff89f6">
 
 6. Client A is informed of the progress of Client B (attempts)
-<img width="1016" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/e9a9a1de-6526-42e5-bfc3-69753c434b43">
-
+<img width="406" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/30b85e0c-c94d-45ac-97cc-e00eb65a2abd">
 
 8. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
-9. Match ends when Client B guesses the word, or gives up
-<img width="1598" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ef1fce70-4ba7-4524-aab8-2f4837a49cd6">
+<img width="1347" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/3aa27630-4122-4995-a7f2-72bbbbf14048">
 
-<img width="1460" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/3c61738c-acab-4fa8-9cb2-e87d47b30953">
+10. Match ends when Client B guesses the word, or gives up
+<img width="1347" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ec192ffa-e15b-4255-937e-c19b12ab2a1b">
 
 11. Command "get matches"
 <img width="547" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ff7541ed-a88f-4fa0-a427-48f92e5e6dd9">
