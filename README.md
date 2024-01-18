@@ -3,11 +3,6 @@
 Well it's that easy!
 ---
 
-PROLOG:
-
-The people we are looking for should always strive to understand why things work, why things happen.
-They must posses (or strive to acquire) essential knowledge about the technologies they work with.
-When that's the case - its visible in the work they do.
 
 TEST TASK:
 
