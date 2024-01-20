@@ -19,8 +19,8 @@ def client_receive(client_socket:socket.socket, data_from_server:str, client_id:
     elif message_type == E_MESSAGE_TYPE.GAME_NOTIFICATION:
         print(f"{response}")
         
-    elif message_type == E_MESSAGE_TYPE.GAME_WON:
-        is_game_started = False        
+    elif message_type == E_MESSAGE_TYPE.GAME_WON or message_type == E_MESSAGE_TYPE.GAME_GIVE_UP:
+        is_game_started = False
         print(f"{response}")
         
     elif message_type == E_MESSAGE_TYPE.WELCOME_MESSAGE:
@@ -72,11 +72,14 @@ def client_sent(client_socket, message_for_server, client_id, is_game_started):
         message_type = E_MESSAGE_TYPE.GET_MATCHES
         
     elif is_game_started == True:
-        message_type = E_MESSAGE_TYPE.GAME_STARED
+        if message_for_server == "give up":
+            message_type = E_MESSAGE_TYPE.GAME_GIVE_UP
+        else:
+            message_type = E_MESSAGE_TYPE.GAME_STARED
 
     elif message_for_server.startswith("send hint:"):
         message_type = E_MESSAGE_TYPE.GAME_SENT_HINT
-
+  
     else:
         print("No known command.")
         return

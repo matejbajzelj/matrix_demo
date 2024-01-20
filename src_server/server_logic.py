@@ -1,8 +1,16 @@
 from src_common.constants import MIN_AUTH_TOKEN_VALUE, MAX_AUTH_TOKEN_VALUE, PASSWORD
 from src_common.tools import E_MESSAGE_TYPE, encode_message
 from src_server.client_lib import find_client, generate_unique_id, add_client
-from src_server.match_lib import is_client_in_match, find_match_by_id, generate_unique_match_id, start_match, update_match_status, E_MATCH_STATUS
 from src_common.messages import get_server_notification
+from src_server.match_lib import (remove_match,
+                                  is_client_in_match,
+                                  find_match_by_id,
+                                  generate_unique_match_id,
+                                  start_match,
+                                  update_match_status,
+                                  increase_match_tries,
+                                  E_MATCH_STATUS)
+
 
 def allow_client_further(conn, addr, message_type, auth_token, message_from_client = ""):
     
@@ -16,6 +24,7 @@ def allow_client_further(conn, addr, message_type, auth_token, message_from_clie
         return True, client_id
     
     return False, 0
+
 
 def server_action_start_match(conn, client_id, message_from_client, auth_token):
     
@@ -85,11 +94,35 @@ def server_action_accepted_match(accepted_match_id):
     message_to_send_to_b = get_server_notification(f"Match with id {accepted_match_id} started. Try to guess a word.")    
     client_b_message = encode_message(E_MESSAGE_TYPE.GAME_STARED, client_b_id, message_to_send_to_b)
     client_b_conn.sendall(client_b_message)
+ 
+    
+def server_action_declined_match(accepted_match_id):
         
+    isMatchFound, matchFound = find_match_by_id(accepted_match_id, 'match_id')
+    remove_match(accepted_match_id)
+    
+    client_a_id = matchFound["client_a_id"]
+    client_b_id = matchFound["client_b_id"]
+
+    is_client_a_found, client_a = find_client(client_a_id)
+    client_a_conn = client_a[1]
+    
+    is_client_b_found, client_b = find_client(client_b_id)
+    client_b_conn = client_b[1]
+    
+    message_to_send_to_a = get_server_notification(f"Match with id {accepted_match_id} was declined")
+    client_a_message = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_a_id, message_to_send_to_a)
+    client_a_conn.sendall(client_a_message)
+    
+    message_to_send_to_b = get_server_notification(f"Match with id {accepted_match_id} was declined by client_b: {client_b_id}")
+    client_b_message = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_b_id, message_to_send_to_b)
+    client_b_conn.sendall(client_b_message)
+    
+    
 def server_action_game_started(guess_word, client_b_id):
     isMatchFound, matchFound = find_match_by_id(client_b_id, 'client_b_id')    
-    client_a_id = matchFound['client_a_id']
-    client_b_match_tries = matchFound['client_b_tries']
+    client_a_id = matchFound['client_a_id']    
+    match_id = matchFound['match_id']
     
     client_b_found, client_b = find_client(client_b_id)
     client_b_conn = client_b[1]
@@ -99,19 +132,45 @@ def server_action_game_started(guess_word, client_b_id):
                         
     if (matchFound['word_to_guess'] == guess_word):
         
-        update_match_status(matchFound['match_id'], E_MATCH_STATUS.WON)
+        update_match_status(match_id, E_MATCH_STATUS.WON)
         client_b_message = encode_message(E_MESSAGE_TYPE.GAME_WON, client_b_id, "You found a word. You WON!")
         client_b_conn.sendall(client_b_message)
 
         client_a_message = encode_message(E_MESSAGE_TYPE.GAME_NOTIFICATION, client_a_id, "Word was found. Client B Won")
         client_a_conn.sendall(client_a_message)
     else:
-        matchFound['client_b_tries'] += 1
+        client_b_match_tries = increase_match_tries(match_id)
         client_b_message = encode_message(E_MESSAGE_TYPE.GAME_STARED, client_b_id, f"Wrong word. You had {client_b_match_tries} tries")
         client_b_conn.sendall(client_b_message)
 
         client_a_message = encode_message(E_MESSAGE_TYPE.GAME_NOTIFICATION, client_a_id, f"Wrong word. Client B had {client_b_match_tries} tries")
         client_a_conn.sendall(client_a_message)
+        
+        
+def server_action_game_give_up(client_b_id):
+    isMatchFound, matchFound = find_match_by_id(client_b_id, 'client_b_id')
+    client_a_id = matchFound['client_a_id']
+    match_id = matchFound['match_id']
+    
+    client_b_found, client_b = find_client(client_b_id)
+    client_b_conn = client_b[1]
+
+    client_a_found, client_a = find_client(client_a_id)
+    client_a_conn = client_a[1]
+    
+    message_type = E_MESSAGE_TYPE.GAME_GIVE_UP
+    message_for_client_a, message_for_client_b = '',''
+    message_for_client_b = "Game was Stopped. You gave up, You lose."
+    message_for_client_a = "Game was Stopped. Client B: {client_b_id} Gave up."
+        
+    if matchFound['status'] == E_MATCH_STATUS.ACTIVE:    
+        update_match_status(match_id, E_MATCH_STATUS.GIVE_UP)
+        
+    client_b_message = encode_message(message_type, client_b_id, message_for_client_b)
+    client_b_conn.sendall(client_b_message)
+
+    client_a_message = encode_message(message_type, client_a_id, message_for_client_a)
+    client_a_conn.sendall(client_a_message)
     
     
 def server_action_sent_hint(message_from_client_a, client_a_id):

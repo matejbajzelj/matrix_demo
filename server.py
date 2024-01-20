@@ -7,8 +7,14 @@ from src_common.tools import decode_message, encode_message, E_MESSAGE_TYPE
 from src_common.messages import get_server_notification, get_welcome_message, get_starting_server_info
 from src_server.client_lib import remove_client
 from src_server.commands import get_users_command_output, get_matches_command_output
-from src_server.match_lib import remove_match
-from src_server.server_logic import server_action_sent_hint, server_action_accepted_match, server_action_game_started, server_action_start_match, allow_client_further
+from src_server.server_logic import (server_action_sent_hint, 
+                                     server_action_accepted_match, 
+                                     server_action_game_started,
+                                     server_action_start_match,
+                                     allow_client_further,
+                                     server_action_declined_match,
+                                     server_action_game_give_up)
+
 
 def disconnect_client(conn, auth_token=0):
     # Password is incorrect, send an error message and close the connection
@@ -65,11 +71,15 @@ def listen_clients(conn, addr):
                 elif message_type == E_MESSAGE_TYPE.DECLINE_MATCH:
                     
                     accepted_match_id = message_from_client
-                    remove_match(accepted_match_id)
+                    server_action_declined_match(accepted_match_id)
                
                 elif message_type == E_MESSAGE_TYPE.GAME_STARED:
                     skip_last_response = True
                     server_action_game_started(message_from_client, auth_token)
+                    
+                elif message_type == E_MESSAGE_TYPE.GAME_GIVE_UP:
+                    skip_last_response = True
+                    server_action_game_give_up(auth_token)
                 
                 elif message_type == E_MESSAGE_TYPE.GAME_SENT_HINT:
                     server_action_sent_hint(message_from_client, auth_token)
@@ -116,7 +126,8 @@ def start_server(tcp_enabled:bool, tcp_port:int, tcp_host:str, unix_path:str):
             
         client_thread = threading.Thread(target=listen_clients, args=(client_socket, addr))
         client_thread.start()
-           
+
+
 if __name__ == "__main__":
     
     # USE TCP:  paython server.py true 65433 127.0.0.1

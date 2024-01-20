@@ -76,6 +76,16 @@ def update_match_status(match_id, match_status:E_MATCH_STATUS):
     
     return False
 
+def increase_match_tries(match_id):
+    
+    isFound, match = find_match_by_id(match_id)
+    if isFound:
+        with lock:
+            match['client_b_tries'] += 1
+            return match['client_b_tries']
+    
+    return -1
+
 def remove_match(match_id):
     with lock:
         for match in all_matches:

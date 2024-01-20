@@ -20,6 +20,7 @@ class E_MESSAGE_TYPE(Enum):
     GAME_WON = 14
     GAME_NOTIFICATION = 15
     GAME_SENT_HINT = 16
+    GAME_GIVE_UP = 17
 
 
 # picked message type and size, picked message length and size of var to make my header.
