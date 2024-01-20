@@ -89,6 +89,10 @@ Optional/bonus: offer a website that displays the progress of all the matches, f
 Must be able to connect to either Unix socket or a TCP port.
 Implemented. You can specify TCP (with host, port) or Unix (path) or leave empty with default. 
 
+Example of terminas, website.
+<img width="3565" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/6b794c9d-4050-4867-b653-0ca63f9cbecd">
+
+
 RUNTIME:
 
 Both the client and the server must run on Linux, specifically Ubuntu 22.04, without any containers or virtualization. It will be tested on x86 64bit architecture system.
