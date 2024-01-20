@@ -47,11 +47,10 @@ def get_matches_command_output():
             client_a_id = match['client_a_id']
             client_b_id = match['client_b_id']
             match_state = match['status']
-            client_a_tries = match['client_a_tries']
             client_b_tries = match['client_b_tries']
 
             # Create a string with match information
-            match_info_str = f"Match ID: {match_id}, Client A: {client_a_id}, Client B: {client_b_id}, State: {match_state}, A tries: {client_a_tries}, B tries: {client_b_tries}"
+            match_info_str = f"Match ID: {match_id}, Client A: {client_a_id}, Client B: {client_b_id}, State: {match_state}, B tries: {client_b_tries}"
             match_info_list.append(match_info_str)
 
     match_info_list.append("\n-----------------------End Match List----------------------------\n")

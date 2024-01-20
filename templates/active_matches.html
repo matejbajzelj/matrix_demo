@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Active Matches</title>
+       <!-- Compiled and minified CSS -->
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+       <!-- Compiled and minified JavaScript -->
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+       <script src="https://cdn.socket.io/4.7.4/socket.io.js"></script>
+
+</head>
+<body>
+    <script>
+        // Connect to the Socket.IO server
+        var socket_url = 'http://' + document.domain + ':' + location.port
+        var socket = io.connect(socket_url);
+        console.log("socket_url",socket_url)
+        
+        socket.on('connect', function() {
+            console.log("connect", socket_url)
+        });
+
+        // Function to handle updates
+        socket.on('match_insert', function(data) {
+            try{
+
+                // Create a new row for the match data
+                console.log("match_insert", data)
+                const {match, refresh} = data;
+                console.log("match_insert v2", data)
+                if (refresh){
+                    console.log("delete_data true")
+                    var tableBody = document.querySelector('#matchesTable tbody');
+                    while (tableBody.firstChild) {
+                        tableBody.removeChild(tableBody.firstChild);
+                    }
+                } else {
+                    console.log("delete_data false", data)
+                }
+
+                console.log("match_insert v3", match)
+                var newRow = document.createElement('tr');
+                newRow.id = 'match_' + match.match_id;  // Set the unique id for the row
+
+                // Populate the cells with match data
+                newRow.innerHTML = `
+                    <td>${match.match_id}</td>
+                    <td>${match.client_a_id}</td>
+                    <td>${match.client_b_id}</td>
+                    <td>${match.word_to_guess}</td>
+                    <td>${match.status}</td>
+                    <td>${match.client_b_tries}</td>
+                `;
+
+                // Append the new row to the table's tbody
+                var tableBody = document.querySelector('#matchesTable tbody');
+                tableBody.appendChild(newRow);
+
+            } catch (error) {
+                console.error("Error in match_insert:", error);
+                // Handle the error as needed
+            }
+        });
+
+        // Function to handle updates
+        socket.on('match_update', function(data) {
+            // Create a new row for the match data
+           console.log("match_update", data)
+           // Find the existing row with the match_id you received
+           var existingRow = document.querySelector('#match_' + data.match_id);
+
+           // Populate the cells with match data
+           existingRow.querySelector('td:nth-child(5)').textContent = data.status;
+           existingRow.querySelector('td:nth-child(6)').textContent = data.client_b_tries;
+       });
+
+        socket.on('refresh_matches', function(data) {
+            console.log("refresh_matches", data)
+            var tableBody = document.querySelector('#matchesTable tbody');
+            while (tableBody.firstChild) {
+                tableBody.removeChild(tableBody.firstChild);
+            }
+        });
+
+    </script>
+    <h3 id="header">Active Matches</h3>
+    <form method="get" action="/">
+        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+            <i class="material-icons right">send</i>
+          </button>
+    </form>
+    <div>
+        <table id="matchesTable">
+            <thead>
+                <tr>
+                    <th>Match ID</th>
+                    <th>Client A ID</th>
+                    <th>Client B ID</th>
+                    <th>Word to Guess</th>
+                    <th>Status</th>
+                    <th>Client B Tries</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in active_matches %}
+                    <tr id="match_{{ match.match_id }}">
+                    <td>{{ match.match_id }}</td>
+                    <td>{{ match.client_a_id }}</td>
+                    <td>{{ match.client_b_id }}</td>
+                    <td>{{ match.word_to_guess }}</td>
+                    <td>{{ match.status }}</td>
+                    <td>{{ match.client_b_tries }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

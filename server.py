@@ -2,11 +2,15 @@ import socket
 import sys
 import os
 import threading
-from src_common.constants import TCP_ENABLED, TCP_PORT, TCP_HOST, UNIX_PATH
+from flask import Flask, render_template
+from flask_socketio import SocketIO
+from src_common.constants import TCP_ENABLED, TCP_PORT, TCP_HOST, UNIX_PATH, FLASK_PORT
 from src_common.tools import decode_message, encode_message, E_MESSAGE_TYPE
-from src_common.messages import get_server_notification, get_welcome_message, get_starting_server_info
+from src_common.messages import get_server_notification, get_welcome_message, get_starting_server_info, get_help_message
 from src_server.client_lib import remove_client
 from src_server.commands import get_users_command_output, get_matches_command_output
+from src_server.match_lib import get_all_matches, generate_mock_matches
+from src_server.socket_io_manager import socketio
 from src_server.server_logic import (server_action_sent_hint, 
                                      server_action_accepted_match, 
                                      server_action_game_started,
@@ -15,6 +19,21 @@ from src_server.server_logic import (server_action_sent_hint,
                                      server_action_declined_match,
                                      server_action_game_give_up)
 
+
+website_app = Flask(__name__)
+socketio.init_app(website_app)
+
+@website_app.route('/')
+def display_active_matches():
+    # Here, you can fetch the active_matches array from src_server.match_lib
+    # You can also format the data or manipulate it as needed
+    # Then, pass the data to a template and render it
+    active_matches = get_all_matches()  # Fetch active_matches using the appropriate function
+    
+    # if len(active_matches) == 0:
+    #    active_matches = generate_mock_matches()
+        
+    return render_template('active_matches.html', active_matches=active_matches)
 
 def disconnect_client(conn, auth_token=0):
     # Password is incorrect, send an error message and close the connection
@@ -85,6 +104,9 @@ def listen_clients(conn, addr):
                 
                 elif message_type == E_MESSAGE_TYPE.GAME_SENT_HINT:
                     server_action_sent_hint(message_from_client, auth_token)
+                    
+                elif message_type == E_MESSAGE_TYPE.HELP:
+                    message_to_sent = get_help_message()                    
 
                 if skip_last_response == False :                    
                     success_message_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, message_to_sent)
@@ -97,8 +119,8 @@ def listen_clients(conn, addr):
     finally:
         conn.close()
         print(f"Connection with {addr} closed") 
-    
-    
+
+   
 def start_server(tcp_enabled:bool, tcp_port:int, tcp_host:str, unix_path:str):
     
     if tcp_enabled:
@@ -152,7 +174,29 @@ if __name__ == "__main__":
         
     if tcp_enabled and len(sys.argv) > 3:
         tcp_host = sys.argv[3]
-        
+    
     message = get_starting_server_info("Server", tcp_enabled, tcp_port, tcp_host, unix_path)
-    print (message)
-    start_server(tcp_enabled, tcp_port, tcp_host, unix_path)
+    print (message)    
+              
+    # Create threads for both the server and Flask
+    server_thread = threading.Thread(target=start_server, args=(tcp_enabled, tcp_port, tcp_host, unix_path))
+    flask_thread = threading.Thread(target=socketio.run, args=(website_app,), kwargs={'host': tcp_host, 'port': FLASK_PORT})
+
+    # flask_thread = threading.Thread(target=socketio.run(website_app), kwargs={'host': tcp_host, 'port': FLASK_PORT})
+    # flask_thread = threading.Thread(target=website_app.run, kwargs={'host': tcp_host, 'port': FLASK_PORT})
+    flask_thread.daemon = True  # Terminate the Flask thread when the main thread exits
+    server_thread.daemon = True
+    
+    # clear website (if someone has opened html).
+    # Start the server thread first
+    server_thread.start()
+
+    # Start the Flask thread
+    flask_thread.start()  
+            
+    # Wait for both threads to finish before exiting
+    server_thread.join()
+    flask_thread.join()
+    
+    # just to clear the table (if anyone leave website opened and restartes the server)  
+    socketio.emit('refresh_matches')

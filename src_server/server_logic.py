@@ -12,7 +12,6 @@ from src_server.match_lib import (remove_match,
                                   increase_match_tries,
                                   E_MATCH_STATUS)
 
-
 def allow_client_further(conn, addr, message_type, auth_token, message_from_client = ""):
     
     if auth_token >= MIN_AUTH_TOKEN_VALUE and find_client(auth_token):
@@ -109,7 +108,8 @@ def server_action_accepted_match(s_accepted_match_id:str):
 def server_action_declined_match(accepted_match_id):
         
     isMatchFound, matchFound = find_match_by_id(accepted_match_id)
-    remove_match(accepted_match_id)
+    # remove_match(accepted_match_id)
+    update_match_status(accepted_match_id, E_MATCH_STATUS.DECLINED)
     
     client_a_id = matchFound["client_a_id"]
     client_b_id = matchFound["client_b_id"]
@@ -143,18 +143,22 @@ def server_action_game_started(guess_word, client_b_id):
     if (matchFound['word_to_guess'] == guess_word):
         
         update_match_status(match_id, E_MATCH_STATUS.WON)
-        client_b_message = encode_message(E_MESSAGE_TYPE.GAME_WON, client_b_id, "You found a word. You WON!")
-        client_b_conn.sendall(client_b_message)
+        client_b_message = get_server_notification(f"You found a word. You WON!")
+        client_b_data = encode_message(E_MESSAGE_TYPE.GAME_WON, client_b_id, client_b_message)
+        client_b_conn.sendall(client_b_data)
 
-        client_a_message = encode_message(E_MESSAGE_TYPE.GAME_NOTIFICATION, client_a_id, "Word was found. Client B Won")
-        client_a_conn.sendall(client_a_message)
+        client_a_message = get_server_notification(f"Word was found. Client B Won")
+        client_a_data = encode_message(E_MESSAGE_TYPE.GAME_NOTIFICATION, client_a_id, client_a_message)
+        client_a_conn.sendall(client_a_data)
     else:
         client_b_match_tries = increase_match_tries(match_id)
-        client_b_message = encode_message(E_MESSAGE_TYPE.GAME_STARED, client_b_id, f"Wrong word. You had {client_b_match_tries} tries")
-        client_b_conn.sendall(client_b_message)
+        client_b_message = get_server_notification(f"Wrong word. You had {client_b_match_tries} tries")
+        client_b_data = encode_message(E_MESSAGE_TYPE.GAME_STARED, client_b_id, client_b_message)
+        client_b_conn.sendall(client_b_data)
 
-        client_a_message = encode_message(E_MESSAGE_TYPE.GAME_NOTIFICATION, client_a_id, f"Wrong word. Client B had {client_b_match_tries} tries")
-        client_a_conn.sendall(client_a_message)
+        client_a_message = get_server_notification(f"Wrong word. Client B had {client_b_match_tries} tries")
+        client_a_data = encode_message(E_MESSAGE_TYPE.GAME_NOTIFICATION, client_a_id, client_a_message)
+        client_a_conn.sendall(client_a_data)
         
         
 def server_action_game_give_up(client_b_id):
