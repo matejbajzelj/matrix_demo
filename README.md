@@ -2,6 +2,24 @@
 
 Well it's that easy!
 ---
+### Tasks to do
+
+- [x] Server, Client App
+- [x] TCP & Unix socket
+- [x] Custom Binary protocol (7bit header - 1b message type, 2b message length, 4b auth token size) + data
+- [x] Client A requests a list of possible opponents: command `get users`
+- [x] Server responds with a list of possible opponents (IDs)
+- [x] Client A requests a match with opponent (ID), specifying a word to guess: command `start match with {id} {word to guess]`
+- [x] Server either confirms this or rejects with an error code. NOTE: I made client to either accept or declined.
+- [x] The target client - client B - is informed of the match, and can begin guesses
+- [x] Client A is informed of the progress of Client B (attempts)
+- [x] Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B. Command `hint: {growing in the forest.]`
+- [x] Match ends when Client B guesses the word, or gives up. command `give up` during active match
+- [x] Command "get matches" - to display text based list of matches
+- [x] Command "help" - to display command and usage
+- [x] Command "show my id" - to display to client his id, so he could exclude him self from match list and do a match with other IDs
+- [x] Website to show matches (used flask lib)
+- [x] Live update with socketIO (used flask-socketio)
 
 
 TEST TASK:
