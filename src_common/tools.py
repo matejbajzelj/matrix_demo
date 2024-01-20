@@ -21,6 +21,7 @@ class E_MESSAGE_TYPE(Enum):
     GAME_NOTIFICATION = 15
     GAME_SENT_HINT = 16
 
+
 # picked message type and size, picked message length and size of var to make my header.
 # don't know at this time if I need message-type but starting somewhere.
 # types could be "ping or heartbeat", "error", "auth", "game related message"...

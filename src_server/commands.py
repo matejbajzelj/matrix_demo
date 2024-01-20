@@ -1,6 +1,9 @@
 import socket, struct
+from src_server.client_lib import get_all_users
+from src_server.match_lib import get_all_matches
 
-def get_users(connected_clients):
+def get_users_command_output():   
+    connected_clients = get_all_users()
     user_info_list = []
     user_info_list.append("\n--------------------------User List----------------------------\n")
     
@@ -29,9 +32,10 @@ def get_users(connected_clients):
     # Send the list of connected users back to the client
     user_info_response = "\n".join(user_info_list)
     return user_info_response
+   
 
-
-def get_matches(active_matches):
+def get_matches_command_output():
+    active_matches = get_all_matches()
     match_info_list = []
     match_info_list.append("\n--------------------------Match List----------------------------\n")
     
@@ -42,7 +46,7 @@ def get_matches(active_matches):
             match_id = match['match_id']
             client_a_id = match['client_a_id']
             client_b_id = match['client_b_id']
-            match_state = match['state']
+            match_state = match['status']
             client_a_tries = match['client_a_tries']
             client_b_tries = match['client_b_tries']
 

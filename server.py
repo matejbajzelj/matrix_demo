@@ -6,18 +6,14 @@ from src_common.constants import TCP_ENABLED, TCP_PORT, TCP_HOST, UNIX_PATH
 from src_common.tools import decode_message, encode_message, E_MESSAGE_TYPE
 from src_common.messages import get_server_notification, get_welcome_message, get_starting_server_info
 from src_server.client_lib import remove_client
-from src_server.commands import get_users, get_matches
-from src_server.match import remove_match
-from src_server.server_logic import server_action_sent_hint, server_action_accepted_match, server_action_game_started, server_action_start_match, allow_client_futher
-
-# Create a list to store verified client IDs
-connected_clients = []
-active_matches = []
+from src_server.commands import get_users_command_output, get_matches_command_output
+from src_server.match_lib import remove_match
+from src_server.server_logic import server_action_sent_hint, server_action_accepted_match, server_action_game_started, server_action_start_match, allow_client_further
 
 def disconnect_client(conn, auth_token=0):
     # Password is incorrect, send an error message and close the connection
     error_message = get_server_notification("Incorrect password. Connection closed.")
-    remove_client(auth_token, connected_clients)
+    remove_client(auth_token)
     error_message_data = encode_message(E_MESSAGE_TYPE.AUTHENTICATION_REJECTED, 0, error_message)
     conn.sendall(error_message_data)
     conn.close()
@@ -38,7 +34,7 @@ def listen_clients(conn, addr):
             message_to_sent = ""
             message_type, message_length, auth_token, message_from_client = decode_message(data)
             
-            allow, client_id = allow_client_futher(conn, addr, message_type, auth_token, connected_clients, message_from_client)
+            allow, client_id = allow_client_further(conn, addr, message_type, auth_token, message_from_client)
             
             if allow == False:
                 disconnect_client(conn)
@@ -52,31 +48,31 @@ def listen_clients(conn, addr):
                 
                 elif message_type == E_MESSAGE_TYPE.GET_USERS:
                     
-                    message_to_sent = get_users(connected_clients)
+                    message_to_sent = get_users_command_output()
 
                 elif message_type == E_MESSAGE_TYPE.GET_MATCHES:
                
-                    message_to_sent = get_matches(active_matches)
+                    message_to_sent = get_matches_command_output()
 
                 elif message_type == E_MESSAGE_TYPE.START_MATCH:
                     skip_last_response = True
-                    server_action_start_match(conn, client_id, message_from_client, auth_token, active_matches, connected_clients)
+                    server_action_start_match(conn, client_id, message_from_client, auth_token)
                 
                 elif message_type == E_MESSAGE_TYPE.ACCEPT_MATCH:
                     skip_last_response = True
-                    server_action_accepted_match(message_from_client, active_matches, connected_clients)
+                    server_action_accepted_match(message_from_client)
 
                 elif message_type == E_MESSAGE_TYPE.DECLINE_MATCH:
                     
                     accepted_match_id = message_from_client
-                    remove_match(accepted_match_id, active_matches)
+                    remove_match(accepted_match_id)
                
                 elif message_type == E_MESSAGE_TYPE.GAME_STARED:
                     skip_last_response = True
-                    server_action_game_started(message_from_client, auth_token, active_matches, connected_clients)
+                    server_action_game_started(message_from_client, auth_token)
                 
                 elif message_type == E_MESSAGE_TYPE.GAME_SENT_HINT:
-                    server_action_sent_hint(message_from_client, auth_token, active_matches, connected_clients)
+                    server_action_sent_hint(message_from_client, auth_token)
 
                 if skip_last_response == False :                    
                     success_message_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, message_to_sent)
