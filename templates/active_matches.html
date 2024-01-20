@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Active Matches</title>
+       <!-- Compiled and minified CSS -->
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+       <!-- Compiled and minified JavaScript -->
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<body>
+    <h1 id="header">Active Matches</h1>
+    <form method="get" action="/">
+        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+            <i class="material-icons right">send</i>
+          </button>
+    </form>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Match ID</th>
+                    <th>Client A ID</th>
+                    <th>Client B ID</th>
+                    <th>Word to Guess</th>
+                    <th>Status</th>
+                    <th>Client A Tries</th>
+                    <th>Client B Tries</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in active_matches %}
+                    <tr>
+                        <td>{{ match.match_id }}</td>
+                        <td>{{ match.client_a_id }}</td>
+                        <td>{{ match.client_b_id }}</td>
+                        <td>{{ match.word_to_guess }}</td>
+                        <td>{{ match.status }}</td>
+                        <td>{{ match.client_a_tries }}</td>
+                        <td>{{ match.client_b_tries }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

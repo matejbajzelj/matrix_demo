@@ -123,3 +123,28 @@ def is_client_in_match(client_id, match_status:E_MATCH_STATUS = E_MATCH_STATUS.A
 def get_all_matches():
     with all_matches_lock:
         return all_matches.copy()
+
+
+def generate_mock_matches():
+    mocked_active_matches = []
+    for match_id in range(1, 21):  # Generate 20 matches
+        client_a_id = random.randint(1, 1000)  # Replace with your desired range
+        client_b_id = random.randint(1, 1000)  # Replace with your desired range
+        word_to_guess = f"Word{match_id}"  # You can generate words in your preferred way
+        status = random.choice(list(E_MATCH_STATUS))  # Random status from E_MATCH_STATUS
+        client_a_tries = random.randint(0, 10)  # Replace with your desired range
+        client_b_tries = random.randint(0, 10)  # Replace with your desired range
+
+        match = {
+            'match_id': match_id,
+            'client_a_id': client_a_id,
+            'client_b_id': client_b_id,
+            'word_to_guess': word_to_guess,
+            'status': status,
+            'client_a_tries': client_a_tries,
+            'client_b_tries': client_b_tries
+        }
+
+        mocked_active_matches.append(match)
+
+    return mocked_active_matches

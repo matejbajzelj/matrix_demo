@@ -2,11 +2,13 @@ import socket
 import sys
 import os
 import threading
-from src_common.constants import TCP_ENABLED, TCP_PORT, TCP_HOST, UNIX_PATH
+from flask import Flask, render_template
+from src_common.constants import TCP_ENABLED, TCP_PORT, TCP_HOST, UNIX_PATH, FLASK_PORT
 from src_common.tools import decode_message, encode_message, E_MESSAGE_TYPE
 from src_common.messages import get_server_notification, get_welcome_message, get_starting_server_info
 from src_server.client_lib import remove_client
 from src_server.commands import get_users_command_output, get_matches_command_output
+from src_server.match_lib import get_all_matches, generate_mock_matches
 from src_server.server_logic import (server_action_sent_hint, 
                                      server_action_accepted_match, 
                                      server_action_game_started,
@@ -15,6 +17,20 @@ from src_server.server_logic import (server_action_sent_hint,
                                      server_action_declined_match,
                                      server_action_game_give_up)
 
+
+website_app = Flask(__name__)
+
+@website_app.route('/')
+def display_active_matches():
+    # Here, you can fetch the active_matches array from src_server.match_lib
+    # You can also format the data or manipulate it as needed
+    # Then, pass the data to a template and render it
+    active_matches = get_all_matches()  # Fetch active_matches using the appropriate function
+    
+    if len(active_matches) == 0:
+        active_matches = generate_mock_matches()
+        
+    return render_template('active_matches.html', active_matches=active_matches)
 
 def disconnect_client(conn, auth_token=0):
     # Password is incorrect, send an error message and close the connection
@@ -97,8 +113,8 @@ def listen_clients(conn, addr):
     finally:
         conn.close()
         print(f"Connection with {addr} closed") 
-    
-    
+
+   
 def start_server(tcp_enabled:bool, tcp_port:int, tcp_host:str, unix_path:str):
     
     if tcp_enabled:
@@ -152,6 +168,10 @@ if __name__ == "__main__":
         
     if tcp_enabled and len(sys.argv) > 3:
         tcp_host = sys.argv[3]
+    
+    flask_thread = threading.Thread(target=website_app.run, kwargs={'host': tcp_host, 'port': FLASK_PORT})
+    flask_thread.daemon = True  # Terminate the Flask thread when the main thread exits
+    flask_thread.start()
         
     message = get_starting_server_info("Server", tcp_enabled, tcp_port, tcp_host, unix_path)
     print (message)
