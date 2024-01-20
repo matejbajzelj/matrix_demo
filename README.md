@@ -60,17 +60,21 @@ The game flow is as follows:
 6. Client A is informed of the progress of Client B (attempts)
 <img width="406" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/30b85e0c-c94d-45ac-97cc-e00eb65a2abd">
 
-8. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
+7. Client A can write an arbitrary text (a hint) that is sent to and displayed by Client B
 <img width="1347" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/3aa27630-4122-4995-a7f2-72bbbbf14048">
 
-10. Match ends when Client B guesses the word, or gives up
+8. Match ends when Client B guesses the word, or gives up
 <img width="1347" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ec192ffa-e15b-4255-937e-c19b12ab2a1b">
 
-11. Command "get matches"
+9. Command "get matches"
 <img width="547" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/ff7541ed-a88f-4fa0-a427-48f92e5e6dd9">
 
-- Client B receiving invitation
+10. Client B receiving invitation
 <img width="592" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/382bfc62-5677-4cfb-8739-fc7fa2b9c411">
+
+11. Client can list help with command `help`
+<img width="586" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/9f50f51d-0540-445b-aa49-eb2d20225d04">
+
 
 | Server specifics:
 Implemented. You can specify TCP (with host, port) or Unix (path) or leave empty with default. 
