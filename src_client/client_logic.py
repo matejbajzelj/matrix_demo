@@ -74,6 +74,9 @@ def client_sent(client_socket, message_for_server, client_id, is_game_started):
     elif message_for_server == "show my id":
         print(f"Your id: {client_id}")
         return
+    
+    elif message_for_server == "help":
+        message_type = E_MESSAGE_TYPE.HELP
         
     elif is_game_started == True:
         if message_for_server == "give up":
@@ -81,7 +84,7 @@ def client_sent(client_socket, message_for_server, client_id, is_game_started):
         else:
             message_type = E_MESSAGE_TYPE.GAME_STARED
 
-    elif message_for_server.startswith("sent hint:"):
+    elif message_for_server.startswith("hint:"):
         message_type = E_MESSAGE_TYPE.GAME_SENT_HINT
   
     else:

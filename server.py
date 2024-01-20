@@ -6,7 +6,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO
 from src_common.constants import TCP_ENABLED, TCP_PORT, TCP_HOST, UNIX_PATH, FLASK_PORT
 from src_common.tools import decode_message, encode_message, E_MESSAGE_TYPE
-from src_common.messages import get_server_notification, get_welcome_message, get_starting_server_info
+from src_common.messages import get_server_notification, get_welcome_message, get_starting_server_info, get_help_message
 from src_server.client_lib import remove_client
 from src_server.commands import get_users_command_output, get_matches_command_output
 from src_server.match_lib import get_all_matches, generate_mock_matches
@@ -104,6 +104,9 @@ def listen_clients(conn, addr):
                 
                 elif message_type == E_MESSAGE_TYPE.GAME_SENT_HINT:
                     server_action_sent_hint(message_from_client, auth_token)
+                    
+                elif message_type == E_MESSAGE_TYPE.HELP:
+                    message_to_sent = get_help_message()                    
 
                 if skip_last_response == False :                    
                     success_message_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, message_to_sent)
