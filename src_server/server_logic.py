@@ -5,6 +5,7 @@ from src_common.messages import get_server_notification
 from src_server.match_lib import (remove_match,
                                   is_client_in_match,
                                   find_match_by_id,
+                                  find_match_by_custom_id,
                                   generate_unique_match_id,
                                   start_match,
                                   update_match_status,
@@ -26,60 +27,69 @@ def allow_client_further(conn, addr, message_type, auth_token, message_from_clie
     return False, 0
 
 
-def server_action_start_match(conn, client_id, message_from_client, auth_token):
+def server_action_start_match(client_a_conn, client_a_id, message_from_client):
     
     # TODO - add reuse logic if client is in pending match. So use that match.
-    active_match_exist = is_client_in_match(client_id)
-    pending_match_exist = is_client_in_match(client_id, E_MATCH_STATUS.PENDING)
+    active_match_exist = is_client_in_match(client_a_id)
+    pending_match_exist = is_client_in_match(client_a_id, E_MATCH_STATUS.PENDING)
     
     if active_match_exist:
         # Client is already in a match, send an error response
-        error_message = "You are already in a active match."
-        error_response_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, error_message)
-        conn.sendall(error_response_data)
+        error_message = get_server_notification("You are already in a active match.")
+        error_response_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_a_id, error_message)
+        client_a_conn.sendall(error_response_data)
     elif pending_match_exist:
         # Client is already in a match, send an error response
-        error_message = "You are already in a pending match."
-        error_response_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_id, error_message)
-        conn.sendall(error_response_data)
+        error_message = get_server_notification("You are already in a pending match.")
+        error_response_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_a_id, error_message)
+        client_a_conn.sendall(error_response_data)
     else:
         parts = message_from_client.split()
-        opponent_id = int(parts[3])
+        client_b_id = int(parts[3])
         word_to_guess = " ".join(parts[4:])
      
-        isFound, opponentExist = find_client(opponent_id)
+        found_client_b, client_b = find_client(client_b_id)
         
-        if isFound:
+        if word_to_guess == "":
+            # Opponent not found, send an error response
+            client_a_message = get_server_notification("No word provided for the game. Please start a match with all parameters.")
+            client_a_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_a_id, client_a_message)
+            client_a_conn.sendall(client_a_data)
+            
+        elif client_a_id == client_b_id:
+            # Opponent not found, send an error response
+            client_a_message = get_server_notification("You cannot start a match with your self.")
+            client_a_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_a_id, client_a_message)
+            client_a_conn.sendall(client_a_data)
+        
+        elif found_client_b:
             # Start the match and send a success response
             match_id = generate_unique_match_id(MIN_AUTH_TOKEN_VALUE, MAX_AUTH_TOKEN_VALUE)
-            match = start_match(auth_token, opponent_id, word_to_guess, match_id)
-            message_to_sent = f"Match started with ID {match_id}. Your word to guess: {word_to_guess}"
-
+            match = start_match(client_a_id, client_b_id, word_to_guess, match_id)
+            client_a_message = get_server_notification(f"Match started with ID {match_id}. Your word to guess: {word_to_guess}")
+            client_a_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_a_id, client_a_message)
+            client_a_conn.sendall(client_a_data)
+            
             # sent invite to an opponent
-            opponent_conn = opponentExist[1]
-            invitation_message = f"Invitation to match #{match['match_id']}# with guess a word. Accept or Decline?"
-            invitation_data = encode_message(E_MESSAGE_TYPE.MATCH_INVITATION, opponent_id, invitation_message)
-            opponent_conn.sendall(invitation_data)
-     
+            client_b_conn = client_b[1]
+            client_b_message = get_server_notification(f"Invitation to match #{match['match_id']}# with guess a word. Accept or Decline?")
+            client_b_data = encode_message(E_MESSAGE_TYPE.MATCH_INVITATION, client_b_id, client_b_message)
+            client_b_conn.sendall(client_b_data)
+
         else:
             # Opponent not found, send an error response
-            message_to_sent = "Opponent not found."
-            invitation_data = encode_message(E_MESSAGE_TYPE.MATCH_INVITATION, opponent_id, message_to_sent)
-            opponent_conn.sendall(message_to_sent)
+            client_a_message = get_server_notification(f"Client B with id {client_b_id} not found.")
+            client_a_data = encode_message(E_MESSAGE_TYPE.NORMAL_COMMUNICATION, client_a_id, client_a_message)
+            client_a_conn.sendall(client_a_data)
                         
 
-def server_action_accepted_match(accepted_match_id):
-    
-    isMatchFound, matchFound = find_match_by_id(accepted_match_id, 'match_id')
+def server_action_accepted_match(s_accepted_match_id:str):
+    accepted_match_id = int(s_accepted_match_id)
+    isMatchFound, matchFound = find_match_by_id(accepted_match_id)
     update_match_status(accepted_match_id, E_MATCH_STATUS.ACTIVE)
     
     client_a_id = matchFound["client_a_id"]
     client_b_id = matchFound["client_b_id"]
-
-    # sent to client messate_Type
-    # startedIsFound, started_client = find_client(started_client_id, connected_clients)           
-    # invitation_data = encode_message(E_MESSAGE_TYPE.GAME_STARED, started_client_id, accepted_match_id)
-    # staring_person_conn.sendall(invitation_data)
 
     is_client_a_found, client_a = find_client(client_a_id)
     client_a_conn = client_a[1]
@@ -98,7 +108,7 @@ def server_action_accepted_match(accepted_match_id):
     
 def server_action_declined_match(accepted_match_id):
         
-    isMatchFound, matchFound = find_match_by_id(accepted_match_id, 'match_id')
+    isMatchFound, matchFound = find_match_by_id(accepted_match_id)
     remove_match(accepted_match_id)
     
     client_a_id = matchFound["client_a_id"]
@@ -120,7 +130,7 @@ def server_action_declined_match(accepted_match_id):
     
     
 def server_action_game_started(guess_word, client_b_id):
-    isMatchFound, matchFound = find_match_by_id(client_b_id, 'client_b_id')    
+    isMatchFound, matchFound = find_match_by_custom_id(int(client_b_id), 'client_b_id', E_MATCH_STATUS.ACTIVE)    
     client_a_id = matchFound['client_a_id']    
     match_id = matchFound['match_id']
     
@@ -148,7 +158,7 @@ def server_action_game_started(guess_word, client_b_id):
         
         
 def server_action_game_give_up(client_b_id):
-    isMatchFound, matchFound = find_match_by_id(client_b_id, 'client_b_id')
+    isMatchFound, matchFound = find_match_by_custom_id(client_b_id, 'client_b_id', E_MATCH_STATUS.ACTIVE )
     client_a_id = matchFound['client_a_id']
     match_id = matchFound['match_id']
     
@@ -160,8 +170,8 @@ def server_action_game_give_up(client_b_id):
     
     message_type = E_MESSAGE_TYPE.GAME_GIVE_UP
     message_for_client_a, message_for_client_b = '',''
-    message_for_client_b = "Game was Stopped. You gave up, You lose."
-    message_for_client_a = "Game was Stopped. Client B: {client_b_id} Gave up."
+    message_for_client_b = get_server_notification("Game was Stopped. You gave up, You lose.")
+    message_for_client_a = get_server_notification(f"Game was Stopped. Client B: {client_b_id} Gave up.")
         
     if matchFound['status'] == E_MATCH_STATUS.ACTIVE:    
         update_match_status(match_id, E_MATCH_STATUS.GIVE_UP)
@@ -175,7 +185,7 @@ def server_action_game_give_up(client_b_id):
     
 def server_action_sent_hint(message_from_client_a, client_a_id):
     
-    isMatchFound, foundMatch = find_match_by_id(client_a_id, 'client_a_id')
+    isMatchFound, foundMatch = find_match_by_custom_id(client_a_id, 'client_a_id', E_MATCH_STATUS.ACTIVE)
     client_b_id = foundMatch['client_b_id']
     
     client_b_found, client_b = find_client(client_b_id)

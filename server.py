@@ -22,8 +22,8 @@ def disconnect_client(conn, auth_token=0):
     remove_client(auth_token)
     error_message_data = encode_message(E_MESSAGE_TYPE.AUTHENTICATION_REJECTED, 0, error_message)
     conn.sendall(error_message_data)
-    conn.close()
-
+    # conn.close() I close it in try-finally at this time. 
+    
 
 def listen_clients(conn, addr):
     try:
@@ -33,6 +33,7 @@ def listen_clients(conn, addr):
 
         skip_last_response = False
         while True:
+            
             data = conn.recv(1024)
             if not data:
                 break
@@ -44,6 +45,7 @@ def listen_clients(conn, addr):
             
             if allow == False:
                 disconnect_client(conn)
+                break
             else:
                 if message_type == E_MESSAGE_TYPE.PASSWORD_SENT:
                     # Password is correct, send a success message and keep the connection alive
@@ -57,12 +59,12 @@ def listen_clients(conn, addr):
                     message_to_sent = get_users_command_output()
 
                 elif message_type == E_MESSAGE_TYPE.GET_MATCHES:
-               
+            
                     message_to_sent = get_matches_command_output()
 
                 elif message_type == E_MESSAGE_TYPE.START_MATCH:
                     skip_last_response = True
-                    server_action_start_match(conn, client_id, message_from_client, auth_token)
+                    server_action_start_match(conn, client_id, message_from_client)
                 
                 elif message_type == E_MESSAGE_TYPE.ACCEPT_MATCH:
                     skip_last_response = True
@@ -72,7 +74,7 @@ def listen_clients(conn, addr):
                     
                     accepted_match_id = message_from_client
                     server_action_declined_match(accepted_match_id)
-               
+            
                 elif message_type == E_MESSAGE_TYPE.GAME_STARED:
                     skip_last_response = True
                     server_action_game_started(message_from_client, auth_token)
@@ -89,14 +91,14 @@ def listen_clients(conn, addr):
                     conn.sendall(success_message_data)
                 else:
                     skip_last_response = False
-
+                    
     except Exception as e:
         print(f"Error handling client {addr}: {str(e)}")
     finally:
         conn.close()
-        print(f"Connection with {addr} closed")
-
-
+        print(f"Connection with {addr} closed") 
+    
+    
 def start_server(tcp_enabled:bool, tcp_port:int, tcp_host:str, unix_path:str):
     
     if tcp_enabled:

@@ -63,8 +63,8 @@
             "configurations": ["Python: Server.py TCP mode", "Python: Client.py TCP mode", "Python: Client.py TCP mode"]
         },
         {
-            "name": "Python: UNIX Mode (Server & 2x Client)",
-            "configurations": ["Python: Server.py UNIX mode", "Python: Client.py UNIX mode", "Python: Client.py UNIX mode"]
+            "name": "Python: UNIX Mode (Server & 3x Client)",
+            "configurations": ["Python: Server.py UNIX mode", "Python: Client.py UNIX mode", "Python: Client.py UNIX mode", "Python: Client.py UNIX mode"]
         }
     ]
 }

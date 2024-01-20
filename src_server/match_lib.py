@@ -27,9 +27,9 @@ def start_match(client_a_id, client_b_id, word_to_guess, match_id):
         # Generate a unique match ID (you can implement your logic)
         # Create a new match entry
         match = {
-            'match_id': match_id,
-            'client_a_id': client_a_id,
-            'client_b_id': client_b_id,
+            'match_id': int(match_id),
+            'client_a_id': int(client_a_id),
+            'client_b_id': int(client_b_id),
             'word_to_guess': word_to_guess,
             'status': E_MATCH_STATUS.PENDING,  # You can use 'ongoing', 'completed', 'canceled', etc.
             'client_a_tries': 0,
@@ -48,14 +48,15 @@ def generate_unique_match_id(min_auth_token_value, max_auth_token_value):
 
     return match_id
     
-def find_match_by_id(search_value, column_name:str = 'match_id'):
+def find_match_by_id(match_id):
     with lock:
         isFound = False
         matchFound = None
 
         try:
             for match in all_matches:
-                if int(match[column_name]) == int(search_value):
+                # Id is always stored as int, but casting is to int here becuase when getting match from clients they are in string
+                if match['match_id'] == int(match_id):
                     isFound = True
                     matchFound = match
                     break
@@ -65,6 +66,24 @@ def find_match_by_id(search_value, column_name:str = 'match_id'):
             print(f"Error in find_match: {str(e)}")
             # Handle the error here if needed
             return False, matchFound    
+
+def find_match_by_custom_id(search_value, column_name:str = 'match_id', match_status:E_MATCH_STATUS = E_MATCH_STATUS.ACTIVE):
+    with lock:
+        isFound = False
+        matchFound = None
+
+        try:
+            for match in all_matches:
+                if match[column_name] == search_value and match['status'] == match_status:
+                    isFound = True
+                    matchFound = match
+                    break
+
+            return isFound, matchFound
+        except Exception as e:
+            print(f"Error in find_match: {str(e)}")
+            # Handle the error here if needed
+            return False, matchFound            
 
 def update_match_status(match_id, match_status:E_MATCH_STATUS):
     
@@ -96,8 +115,9 @@ def is_client_in_match(client_id, match_status:E_MATCH_STATUS = E_MATCH_STATUS.A
     with lock:
         for match in all_matches:
             # Check if either of the clients in the match matches the specified client_id
-            if (match['client_a'] == client_id or match['client_b'] == client_id) and match['status'] == match_status:
+            if (match['client_a_id'] == client_id or match['client_b_id'] == client_id) and match['status'] == match_status:
                 return True
+            
         return False
 
 def get_all_matches():
