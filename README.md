@@ -129,5 +129,6 @@ Header (7 bytes):
 - message type = 1 bytes
 - data length  = 2 bytes - integer 0-65536 
 - auth token   = 4 bytes - picked large number to avoid duplicates or manully create one by "attacker"
+
 Data:
 - payload: custom X bytes 
