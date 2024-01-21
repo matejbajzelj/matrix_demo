@@ -26,13 +26,16 @@ Well it's that easy!
 - `sudo apt install python3-pip` - if pip is not installed
 - `pip install -r requirements.txt` - to install libraries (they are needed for website part of the task, which was build with Flask, Flask-socketIO
 
-### Run the app (TCP)
-- python3 server.py (with default params, which is predefined TCP_mode = true, port and host)
-- python3 client.py (with default params, which is predefined TCP_mode = true, port and host)
+### Run the app TCP)
+- python3 server.py {tcpMode = true / false} {tcp port / unix socket patch} {tcp host}
+  
+#### TCP mode:
+- `python3 server.py` (with default params, which is predefined TCP_mode = true, port and host)
+- `python3 client.py` (with default params, which is predefined TCP_mode = true, port and host)
 
-### Run the app (UNIX Socket)
-- python3 server.py false 
-- python3 client.py false
+#### UNIX Socket mode:
+- `python3 server.py false`
+- `python3 client.py false`
   
   
 TEST TASK:
