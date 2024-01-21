@@ -36,8 +36,13 @@ Matrix Demo - Word Game
     - `python3 server.py false`
     - `python3 client.py false`
   
-  
-TEST TASK:
+
+#### How I tested it
+- Since I don't have access to real ubuntu, I made virtual machine to install ubuntu 22.04 LTS Desktop.
+
+  <img width="1879" alt="image" src="https://github.com/matejbajzelj/matrix_demo/assets/10921665/fc186508-7635-42df-9ca3-46c5a610b83a">
+
+## TEST TASK:
 
 Using a language of choice from the following:
 
