@@ -163,8 +163,6 @@ if __name__ == "__main__":
     
     if len(sys.argv) > 1:
         tcp_enabled = sys.argv[1].lower() == 'true'
-    else:
-        tcp_enabled = False         
         
     if tcp_enabled and len(sys.argv) > 2:
         tcp_port = int(sys.argv[2])
