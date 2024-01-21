@@ -176,9 +176,8 @@ def server_action_game_give_up(client_b_id):
     message_for_client_a, message_for_client_b = '',''
     message_for_client_b = get_server_notification("Game was Stopped. You gave up, You lose.")
     message_for_client_a = get_server_notification(f"Game was Stopped. Client B: {client_b_id} Gave up.")
-        
-    if matchFound['status'] == E_MATCH_STATUS.ACTIVE:    
-        update_match_status(match_id, E_MATCH_STATUS.GIVE_UP)
+    
+    update_match_status(match_id, E_MATCH_STATUS.GIVE_UP)
         
     client_b_message = encode_message(message_type, client_b_id, message_for_client_b)
     client_b_conn.sendall(client_b_message)
