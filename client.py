@@ -81,6 +81,6 @@ if __name__ == "__main__":
     if tcp_enabled and len(sys.argv) > 3:
         tcp_host = sys.argv[3]
     
-    message = get_starting_server_info("Client", tcp_enabled, tcp_port, tcp_host, unix_path)
+    message = get_starting_server_info("client", tcp_enabled, tcp_port, tcp_host, unix_path)
     print (message)
     start_client(tcp_enabled, tcp_port, tcp_host, unix_path)

@@ -173,7 +173,7 @@ if __name__ == "__main__":
     if tcp_enabled and len(sys.argv) > 3:
         tcp_host = sys.argv[3]
     
-    message = get_starting_server_info("Server", tcp_enabled, tcp_port, tcp_host, unix_path)
+    message = get_starting_server_info("server", tcp_enabled, tcp_port, tcp_host, unix_path)
     print (message)    
               
     # Create threads for both the server and Flask

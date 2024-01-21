@@ -12,9 +12,9 @@ def get_starting_server_info(program_type:str, tcp_enabled:bool, tcp_port:int, t
         message.append( f"UNIX PATH:  {unix_path}\n")
     
     message.append(f"\nPossible ways to start the {program_type} in 2 different modes:\n")
-    message.append(f"1. TCP MODE:  paython server.py true 65433 127.0.0.1\n")
-    message.append(f"2. UNIX MODE: paython server.py false /tmp/my_unix_socket.sock\n")
-    message.append(f"2. UNIX MODE: paython server.py false /tmp/my_unix_socket.sock\n")
+    message.append(f"1. TCP MODE:  paython {program_type}.py true 65433 127.0.0.1\n")
+    message.append(f"2. UNIX MODE: paython {program_type}.py false /tmp/my_unix_socket.sock\n")
+    message.append(f"2. UNIX MODE: paython {program_type}.py false /tmp/my_unix_socket.sock\n")
     get_help_message
     message.append(f"-----------------------End {program_type} info----------------------")
     message_response = "".join(message)
