@@ -29,13 +29,13 @@ Well it's that easy!
 ### Run the app TCP)
 - python3 server.py {tcpMode = true / false} {tcp port / unix socket patch} {tcp host}
   
-#### TCP mode:
-- `python3 server.py` (with default params, which is predefined TCP_mode = true, port and host)
-- `python3 client.py` (with default params, which is predefined TCP_mode = true, port and host)
+* #### TCP mode:
+    - `python3 server.py` (with default params, which is predefined TCP_mode = true, port and host)
+    - `python3 client.py` (with default params, which is predefined TCP_mode = true, port and host)
 
-#### UNIX Socket mode:
-- `python3 server.py false`
-- `python3 client.py false`
+* #### UNIX Socket mode:
+    - `python3 server.py false`
+    - `python3 client.py false`
   
   
 TEST TASK:
