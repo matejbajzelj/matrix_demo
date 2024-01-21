@@ -1,7 +1,6 @@
 
 
-Well it's that easy!
----
+Matrix Demo - Word Game
 ### Tasks to do
 
 - [x] Server, Client App
